@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Luxafor
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content scroll>
+  <ion-list no-lines>
+    <ion-item>
+      <ion-input [(ngModel)]="luxname" placeholder="Luxafor-Device-Name"></ion-input>
+    </ion-item>
+    <button ion-button [style.background-color]="connectColor" full (click)="connect()">Connect</button>
+    <!-- <ion-icon name="settings"></ion-icon> -->
+    <ion-list-header no-lines>
+      <ion-icon name="color-fill"></ion-icon> Color
+    </ion-list-header>
+    <div id="setColors">
+      <ion-grid>
+        <ion-row>
+          <ion-col col-2>
+            <button id="white" (click)="setColor(255, 255, 255)"></button>
+          </ion-col>
+          <ion-col col-2>
+            <button id="green" (click)="setColor(0, 179, 0)"></button>
+          </ion-col>
+          <ion-col col-2>
+            <button id="yellow" (click)="setColor(179, 179, 0)"></button>
+          </ion-col>
+          <ion-col col-2>
+            <button id="red" (click)="setColor(179, 0, 0)"></button>
+          </ion-col>
+          <ion-col col-2>
+            <button id="purple" (click)="setColor(179, 0, 179)"></button>
+          </ion-col>
+          <ion-col col-2>
+            <button id="blue" (click)="setColor(0, 0, 179)"></button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <ion-list-header>
+        <ion-icon name="sunny"></ion-icon> Brightness
+    </ion-list-header>
+    <ion-item>
+      <ion-range min="1" max="255" [(ngModel)]="brightness">
+        <ion-icon small range-left name="sunny"></ion-icon>
+        <ion-icon range-right name="sunny"></ion-icon>
+      </ion-range>
+    </ion-item>
+  </ion-list>
+	<p *ngFor="let device of devices">{{ device }}</p>
+</ion-content>
