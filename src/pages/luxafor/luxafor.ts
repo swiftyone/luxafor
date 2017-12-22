@@ -11,12 +11,40 @@ export class LuxaforPage {
   devices = new Array;
   connectColor: string = '#555';
   luxname: string;
+  brightness: number = 200;
+  activeColor: string;
+  rgb: Array<boolean> = [true, true, true];
+  colors = [{
+    id: 'white',
+    rgb: [true, true, true]
+  },{
+    id: 'green',
+    rgb: [false, true, false]
+  },{
+    id: 'yellow',
+    rgb: [true, true, false]
+  },{
+    id: 'red',
+    rgb: [true, false, false]
+  },{
+    id: 'purple',
+    rgb: [true, false, true]
+  },{
+    id: 'blue',
+    rgb: [false, false, true]
+  },{
+    id: 'cyan',
+    rgb: [false, true, true]
+  },{
+    id: 'none',
+    rgb: [false, false, false]
+  }]
   constructor(public navCtrl: NavController, private luxaforProvider: LuxaforProvider) {
     // set luxname
     this.luxaforProvider.getLuxname().then((name) => {
       this.luxname = name;
     }).catch((err) => {
-      this.luxaforProvider.showToast(err)
+      this.luxaforProvider.showToast(err);
     });
     // set buttoncolor, check bluetooth
     this.luxaforProvider.checkBluetooth().then(() => {
@@ -46,7 +74,13 @@ export class LuxaforPage {
     });
   }
 
-  setColor(r,g,b) {
-    this.luxaforProvider.setColor(r,g,b);
+  setColor(rgb, colorid) {
+    this.rgb = rgb;
+    this.activeColor = colorid;
+    this.luxaforProvider.setColor(rgb, this.brightness);
+  }
+
+  changeBrightness() {
+    this.luxaforProvider.setColor(this.rgb, this.brightness);
   }
 }

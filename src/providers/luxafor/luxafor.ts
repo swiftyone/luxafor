@@ -17,12 +17,18 @@ export class LuxaforProvider {
     this.opts[7] = 0x10;
   }
 
-  setColor(r, g, b) {
+  setColor(rgb, brightness) {
     this.storage.get('deviceid').then(deviceid => {
       this.ble.isConnected(deviceid).then(data => {
-        this.opts[2] = parseInt(r, 16);
-        this.opts[3] = parseInt(g, 16);
-        this.opts[4] = parseInt(b, 16);
+        rgb.forEach((elem, index) => {
+          switch (elem) {
+            case true:
+              this.opts[index + 2] = brightness;
+              break;
+            case false:
+              this.opts[index + 2] = 0;
+          }
+        });
         this.ble.writeWithoutResponse(deviceid, '1234', '1235', this.opts.buffer).then(()=> {
           // success
         }).catch(data => {

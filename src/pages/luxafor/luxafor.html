@@ -19,32 +19,17 @@
     <div id="setColors">
       <ion-grid>
         <ion-row>
-          <ion-col col-2>
-            <button id="white" (click)="setColor(255, 255, 255)"></button>
+          <ion-col col-3 *ngFor="let color of colors">
+            <button id="{{color.id}}" (click)="setColor(color.rgb, color.id)"><ion-icon *ngIf="activeColor == color.id" name="checkmark"></ion-icon></button>
           </ion-col>
-          <ion-col col-2>
-            <button id="green" (click)="setColor(0, 179, 0)"></button>
-          </ion-col>
-          <ion-col col-2>
-            <button id="yellow" (click)="setColor(179, 179, 0)"></button>
-          </ion-col>
-          <ion-col col-2>
-            <button id="red" (click)="setColor(179, 0, 0)"></button>
-          </ion-col>
-          <ion-col col-2>
-            <button id="purple" (click)="setColor(179, 0, 179)"></button>
-          </ion-col>
-          <ion-col col-2>
-            <button id="blue" (click)="setColor(0, 0, 179)"></button>
-          </ion-col>
-        </ion-row>
+      </ion-row>
       </ion-grid>
     </div>
     <ion-list-header>
         <ion-icon name="sunny"></ion-icon> Brightness
     </ion-list-header>
     <ion-item>
-      <ion-range min="1" max="255" [(ngModel)]="brightness">
+      <ion-range min="0" max="255" step="5" [(ngModel)]="brightness" (ionChange)="changeBrightness()">
         <ion-icon small range-left name="sunny"></ion-icon>
         <ion-icon range-right name="sunny"></ion-icon>
       </ion-range>
@@ -52,3 +37,8 @@
   </ion-list>
 	<p *ngFor="let device of devices">{{ device }}</p>
 </ion-content>
+
+
+<!-- <ul class="navigation">
+  <li ng-repeat="item in items" class="item" ng-class="{'active': item.id == states.activeItem}" ng-click="states.activeItem=item.id">{{item.title}}</li>
+</ul> -->
