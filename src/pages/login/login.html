@@ -1,0 +1,49 @@
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-10 offset-1>
+        <ion-card id="login">
+          <ion-list>
+            <ion-item class="header">
+              Login
+            </ion-item>
+            <ion-item>
+              <ion-icon item-start name="mail"></ion-icon><ion-input type="email" placeholder="Email"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-icon item-start name="lock"></ion-icon><ion-input type="password" placeholder="Password"></ion-input>
+            </ion-item>
+            <ion-item>
+              <button ion-button full default>Login</button>
+            </ion-item>
+            <ion-item>
+              <button ion-button full default clear (click)="goRegister()">Register</button>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+        <ion-card id="register">
+          <ion-list>
+            <ion-item class="header">
+              Register
+            </ion-item>
+            <ion-item>
+              <ion-icon item-start name="mail"></ion-icon><ion-input type="email" placeholder="Email"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-icon item-start name="lock"></ion-icon><ion-input type="password" placeholder="Password"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-icon item-start name="lock"></ion-icon><ion-input type="password" placeholder="Repeat Password"></ion-input>
+            </ion-item>
+            <ion-item>
+              <button ion-button full default>Register</button>
+            </ion-item>
+            <ion-item>
+              <button ion-button full default clear (click)="goLogin()">Back</button>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

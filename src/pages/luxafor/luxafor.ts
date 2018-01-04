@@ -10,8 +10,9 @@ import { LuxaforProvider } from '../../providers/luxafor/luxafor';
 export class LuxaforPage {
   devices = new Array;
   connectColor: string = '#555';
+  connectTitle: string = 'Connect';
   luxname: string;
-  brightness: number = 200;
+  brightness: number = 128;
   activeColor: string;
   rgb: Array<boolean> = [true, true, true];
   colors = [{
@@ -46,10 +47,17 @@ export class LuxaforPage {
     }).catch((err) => {
       this.luxaforProvider.showToast(err);
     });
-    // set buttoncolor, check bluetooth
+    // set buttoncolor, check bluetooth, check connection
     this.luxaforProvider.checkBluetooth().then(() => {
-      this.connectColor = '#488aff';
+      this.luxaforProvider.isConnected().then(() => {
+        this.connectTitle = 'Disconnect';
+        this.connectColor = '#32db64';
+      }).catch(() => {
+        this.connectTitle = 'Connect';
+        this.connectColor = '#488aff';
+      });
     }).catch(() => {
+      this.connectTitle = 'Enable Bluetooth';
       this.connectColor = '#f53d3d';
     });
   }
@@ -59,25 +67,39 @@ export class LuxaforPage {
       this.connectColor = '#488aff';
     }).catch(() => {
       this.connectColor = '#f53d3d';
+      return null;
     });
 
-    this.luxaforProvider.getLuxname().then(name => {
-      if (name != this.luxname && this.luxname != '') {
-        this.luxaforProvider.setLuxname(this.luxname);
-        this.luxaforProvider.connectLuxafor(name);
-      }
-      else
-        this.luxaforProvider.connectLuxafor(name);
+    this.luxaforProvider.isConnected().then(() => {
+      this.luxaforProvider.disconnectLuxafor().then(() => {
+        this.connectTitle = 'Connect';
+        this.connectColor = '#488aff';
+      }).catch(() => {
+        this.connectTitle = 'Disconnect';
+        this.connectColor = '#32db64';
+      });
     }).catch(() => {
-      this.luxaforProvider.setLuxname(this.luxname);
-      this.luxaforProvider.connectLuxafor(name);
+      this.luxaforProvider.getLuxname().then(name => {
+        if (name != this.luxname)
+          this.luxaforProvider.setLuxname(this.luxname);
+        this.luxaforProvider.connectLuxafor(this.luxname).then(() => {
+          this.connectTitle = 'Disconnect';
+          this.connectColor = '#32db64';
+        }).catch(() => {
+          this.connectTitle = 'Connect';
+          this.connectColor = '#f53d3d';
+        });
+      })
     });
   }
 
   setColor(rgb, colorid) {
     this.rgb = rgb;
-    this.activeColor = colorid;
-    this.luxaforProvider.setColor(rgb, this.brightness);
+    this.luxaforProvider.setColor(rgb, this.brightness).then(() => {
+      this.activeColor = colorid;
+    }).catch(() => {
+      this.activeColor = null;
+    });
   }
 
   changeBrightness() {

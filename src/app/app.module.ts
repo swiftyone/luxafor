@@ -7,6 +7,7 @@ import { LuxaforPage } from '../pages/luxafor/luxafor';
 import { TimePage } from '../pages/time/time';
 import { TeamPage } from '../pages/team/team';
 import { TabsPage } from '../pages/tabs/tabs';
+import { LoginPage } from '../pages/login/login';
 import { BLE } from '@ionic-native/ble';
 import { IonicStorageModule } from '@ionic/storage';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -19,7 +20,8 @@ import { LuxaforProvider } from '../providers/luxafor/luxafor';
     LuxaforPage,
     TimePage,
     TeamPage,
-    TabsPage
+    TabsPage,
+    LoginPage
   ],
   imports: [
     BrowserModule,
@@ -32,7 +34,8 @@ import { LuxaforProvider } from '../providers/luxafor/luxafor';
     LuxaforPage,
     TimePage,
     TeamPage,
-    TabsPage
+    TabsPage,
+    LoginPage
   ],
   providers: [
     StatusBar,

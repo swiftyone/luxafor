@@ -1,0 +1,38 @@
+page-login {
+  .header {
+    background-color: #488aff !important;
+    text-align: center;
+    color: #fff !important;
+    font-weight: bold;
+  }
+  ion-content {
+    background-image: url('../../assets/imgs/login.jpg');
+    background-size: cover;
+  }
+  ion-card {
+    margin-top: 0px !important;
+    background: transparent !important;
+    position: absolute;
+    top: 50px !important;
+    transition: all .75s;
+    background: rgba(#ffffff, .9) !important;
+    &#login {
+      visibility: visible;
+      opacity: 1;
+    }
+    &#register {
+      visibility: hidden;      
+      opacity: 0;
+    }
+  }
+  .item-inner {
+    margin-left: 0px !important;
+  }
+  ion-item {
+    background: transparent !important;
+  }
+  ion-icon {
+    color: #555;
+    font-size: 2.5rem !important;
+  }
+}

@@ -11,7 +11,7 @@
     <ion-item>
       <ion-input [(ngModel)]="luxname" placeholder="Luxafor-Device-Name"></ion-input>
     </ion-item>
-    <button ion-button [style.background-color]="connectColor" full (click)="connect()">Connect</button>
+    <button ion-button [style.background-color]="connectColor" full (click)="connect()">{{ connectTitle }}</button>
     <!-- <ion-icon name="settings"></ion-icon> -->
     <ion-list-header no-lines>
       <ion-icon name="color-fill"></ion-icon> Color

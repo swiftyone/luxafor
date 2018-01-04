@@ -17,25 +17,27 @@ export class LuxaforProvider {
     this.opts[7] = 0x10;
   }
 
-  setColor(rgb, brightness) {
-    this.storage.get('deviceid').then(deviceid => {
-      this.ble.isConnected(deviceid).then(data => {
-        rgb.forEach((elem, index) => {
-          switch (elem) {
-            case true:
+  setColor(rgb, brightness): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.storage.get('deviceid').then(deviceid => {
+        this.ble.isConnected(deviceid).then(data => {
+          rgb.forEach((elem, index) => {
+            switch (elem) {
+              case true:
               this.opts[index + 2] = brightness;
               break;
-            case false:
+              case false:
               this.opts[index + 2] = 0;
-          }
-        });
-        this.ble.writeWithoutResponse(deviceid, '1234', '1235', this.opts.buffer).then(()=> {
-          // success
+            }
+          });
+          this.ble.writeWithoutResponse(deviceid, '1234', '1235', this.opts.buffer).then(()=> {
+            resolve();
+          }).catch(data => {
+            reject();
+          });
         }).catch(data => {
-          this.showToast('Didn\'t work');
+          reject();
         });
-      }).catch(data => {
-        this.showToast(data);
       });
     });
   }
@@ -47,22 +49,40 @@ export class LuxaforProvider {
     return this.storage.get('luxname');
   }
 
-  connectLuxafor(name) {
-    this.ble.scan([], 5).subscribe(device => {
-      if (device.name == name) {
-        this.ble.connect(device.id).subscribe(data => {
-          this.storage.set('deviceid', device.id);
-          this.showToast('Connected!');
-          return Promise.resolve();
+  isConnected() {
+    return this.storage.get('deviceid').then(deviceid => {
+      return this.ble.isConnected(deviceid);
+    });
+  }
+
+  connectLuxafor(name): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.ble.scan([], 5).subscribe(device => {
+          if (device.name == name) {
+            this.ble.connect(device.id).subscribe(data => {
+              console.log('Connected');
+              this.storage.set('deviceid', device.id);
+              resolve(data);
+            });
+          }
         });
+      } catch (error) {
+        reject(error);
       }
+    });
+  }
+
+  disconnectLuxafor() {
+    return this.storage.get('deviceid').then(deviceid => {
+      return this.ble.disconnect(deviceid);
     });
   }
 
   checkBluetooth(): Promise<any> {
     return this.ble.isEnabled()
     .then(data => {
-      this.showToast(String(data));
+      // this.showToast(String(data));
     }).catch(data => {
       return this.ble.enable().then(data => {
         this.showToast(String(data));
