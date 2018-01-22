@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Settings</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list no-lines>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-6 offset-3>
+          <img id="avatar" src="https://www.gravatar.com/avatar/{{ user.email | gravatarPipe }}?s=250">
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-item>
+      <ion-input [(ngModel)]="username" type="text" placeholder="Username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <button ion-button block default (click)="changeUsername(username)">Save</button>
+    </ion-item>
+    <ion-list-header no-lines>
+      Change Password
+    </ion-list-header>
+    <ion-item>
+      <ion-input [(ngModel)]="password" type="password" placeholder="Password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="passwordRepeat" type="password" placeholder="Repeat Password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <button ion-button block default (click)="changePassword(password, passwordRepeat)">Change Password</button>
+    </ion-item>
+    <ion-item>
+      <button ion-button color="danger" outline block default (click)="logout()">Logout</button>
+    </ion-item>
+  </ion-list>
+</ion-content>

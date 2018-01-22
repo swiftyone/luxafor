@@ -1,0 +1,67 @@
+page-profile {
+  #avatar {
+    border-radius: 50%;
+    width: 100%;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.12), 0 3px 3px rgba(0,0,0,0.24);
+  }
+  .status-0 {border: 5px solid rgb(255, 255, 255)}
+  .status-1 {border: 5px solid rgb(0, 220, 0)}
+  .status-2 {border: 5px solid rgb(220, 220, 0)}
+  .status-3 {border: 5px solid rgb(220, 0, 0)}
+  .status-4 {border: 5px solid rgb(220, 0, 220)}
+  .status-5 {border: 5px solid rgb(0, 0, 220)}
+  .status-6 {border: 5px solid rgb(0, 220, 220)}
+  .status-7 {border: 5px solid rgb(30, 30, 30)}
+  .noDataYet {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+  }
+  .gantt {
+    margin: 10px;
+    height: 40px;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.24);
+  }
+  .datum {
+    text-align: center;
+    color: #555;
+  }
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 10px;
+    color: #555;
+  }
+  .block {
+    float: left;
+    height: 40px;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.24);
+    text-align: center;
+    vertical-align: middle;
+    line-height: 40px;
+    white-space: nowrap;
+  }
+  .block:hover {
+    width: 100px;
+  }
+  .block-0 {
+    background-color: rgb(240, 240, 240);
+    color: #111;
+  }
+  .block-1 {background-color: rgb(99, 186, 72)}
+  .block-2 {
+    background-color: rgb(190, 173, 60);
+    color: #111;
+  }
+  .block-3 {background-color: rgb(162, 60, 60)}
+  .block-4 {background-color: rgb(165, 56, 165)}
+  .block-5 {background-color: rgb(53, 53, 164)}
+  .block-6 {
+    background-color: rgb(54, 169, 169);
+    color: #111;
+  }
+  .block-7 {background-color: rgb(30, 30, 30)}
+}

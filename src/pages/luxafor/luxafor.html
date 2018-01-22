@@ -3,6 +3,9 @@
     <ion-title>
       Luxafor
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="goSettings()"><ion-icon name="cog"></ion-icon></button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -19,8 +22,8 @@
     <div id="setColors">
       <ion-grid>
         <ion-row>
-          <ion-col col-3 *ngFor="let color of colors">
-            <button id="{{color.id}}" (click)="setColor(color.rgb, color.id)"><ion-icon *ngIf="activeColor == color.id" name="checkmark"></ion-icon></button>
+          <ion-col col-3 *ngFor="let i of [0,1,2,3,4,5,6,7]">
+            <button id="status-{{ i }}" (click)="setColor(i)"><ion-icon *ngIf="activeColor == i" name="checkmark"></ion-icon></button>
           </ion-col>
       </ion-row>
       </ion-grid>
@@ -34,11 +37,9 @@
         <ion-icon range-right name="sunny"></ion-icon>
       </ion-range>
     </ion-item>
+    <ion-item *ngIf="error" class="error" text-center>
+      {{ error }}
+    </ion-item>
   </ion-list>
 	<p *ngFor="let device of devices">{{ device }}</p>
 </ion-content>
-
-
-<!-- <ul class="navigation">
-  <li ng-repeat="item in items" class="item" ng-class="{'active': item.id == states.activeItem}" ng-click="states.activeItem=item.id">{{item.title}}</li>
-</ul> -->

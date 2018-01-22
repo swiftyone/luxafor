@@ -6,6 +6,16 @@ import { Storage } from '@ionic/storage';
 @Injectable()
 export class LuxaforProvider {
   opts = new Uint8Array(8);
+  colors = [
+    [true, true, true],
+    [false, true, false],
+    [true, true, false],
+    [true, false, false],
+    [true, false, true],
+    [false, false, true],
+    [false, true, true],
+    [false, false, false]
+  ]
   constructor(private ble: BLE, private toastCtrl: ToastController, private storage: Storage) {
     this.opts[0] = 0xa1;
     this.opts[1] = 0xff;
@@ -17,10 +27,11 @@ export class LuxaforProvider {
     this.opts[7] = 0x10;
   }
 
-  setColor(rgb, brightness): Promise<any> {
+  setColor(index, brightness): Promise<any> {
     return new Promise((resolve, reject) => {
       this.storage.get('deviceid').then(deviceid => {
         this.ble.isConnected(deviceid).then(data => {
+          let rgb = this.colors[index];
           rgb.forEach((elem, index) => {
             switch (elem) {
               case true:
@@ -97,7 +108,7 @@ export class LuxaforProvider {
     let toast = this.toastCtrl.create({
       message: message,
       duration: 3000,
-      position: 'top'
+      position: 'bottom'
     });
     toast.present();
   }

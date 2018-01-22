@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
 import { BLE } from '@ionic-native/ble';
 import { LuxaforProvider } from '../../providers/luxafor/luxafor';
+import { SettingsPage } from '../settings/settings';
+import { FirebaseProvider } from '../../providers/firebase/firebase';
 
 @Component({
     selector: 'page-luxafor',
@@ -15,32 +17,9 @@ export class LuxaforPage {
   brightness: number = 128;
   activeColor: string;
   rgb: Array<boolean> = [true, true, true];
-  colors = [{
-    id: 'white',
-    rgb: [true, true, true]
-  },{
-    id: 'green',
-    rgb: [false, true, false]
-  },{
-    id: 'yellow',
-    rgb: [true, true, false]
-  },{
-    id: 'red',
-    rgb: [true, false, false]
-  },{
-    id: 'purple',
-    rgb: [true, false, true]
-  },{
-    id: 'blue',
-    rgb: [false, false, true]
-  },{
-    id: 'cyan',
-    rgb: [false, true, true]
-  },{
-    id: 'none',
-    rgb: [false, false, false]
-  }]
-  constructor(public navCtrl: NavController, private luxaforProvider: LuxaforProvider) {
+  error: string;
+
+  constructor(public navCtrl: NavController, private luxaforProvider: LuxaforProvider, public fb: FirebaseProvider) {
     // set luxname
     this.luxaforProvider.getLuxname().then((name) => {
       this.luxname = name;
@@ -48,18 +27,18 @@ export class LuxaforPage {
       this.luxaforProvider.showToast(err);
     });
     // set buttoncolor, check bluetooth, check connection
-    this.luxaforProvider.checkBluetooth().then(() => {
-      this.luxaforProvider.isConnected().then(() => {
-        this.connectTitle = 'Disconnect';
-        this.connectColor = '#32db64';
-      }).catch(() => {
-        this.connectTitle = 'Connect';
-        this.connectColor = '#488aff';
-      });
-    }).catch(() => {
-      this.connectTitle = 'Enable Bluetooth';
-      this.connectColor = '#f53d3d';
-    });
+    // this.luxaforProvider.checkBluetooth().then(() => {
+    //   this.luxaforProvider.isConnected().then(() => {
+    //     this.connectTitle = 'Disconnect';
+    //     this.connectColor = '#32db64';
+    //   }).catch(() => {
+    //     this.connectTitle = 'Connect';
+    //     this.connectColor = '#488aff';
+    //   });
+    // }).catch(() => {
+    //   this.connectTitle = 'Enable Bluetooth';
+    //   this.connectColor = '#f53d3d';
+    // });
   }
 
   connect() {
@@ -93,16 +72,31 @@ export class LuxaforPage {
     });
   }
 
-  setColor(rgb, colorid) {
-    this.rgb = rgb;
-    this.luxaforProvider.setColor(rgb, this.brightness).then(() => {
-      this.activeColor = colorid;
+  setColor(index) {
+    this.fb.updateStatus(index).then(() => {
+      this.activeColor = index;
     }).catch(() => {
       this.activeColor = null;
+    });
+    this.luxaforProvider.setColor(index, this.brightness).then(() => {
+      this.error = null;      
+    }).catch(() => {
+      this.error = 'Connect Luxafor Device.';
     });
   }
 
   changeBrightness() {
-    this.luxaforProvider.setColor(this.rgb, this.brightness);
+    this.luxaforProvider.setColor(this.activeColor, this.brightness).then(() => {
+      this.error = null;      
+    }).catch(() => {
+      this.error = 'Connect Luxafor Device.';
+    });
   }
+
+  goSettings() {
+    this.navCtrl.push(SettingsPage);
+  }
+
+  
+
 }

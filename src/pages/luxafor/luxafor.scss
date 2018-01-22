@@ -10,16 +10,19 @@ page-luxafor {
       border-radius: 2px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     }
-    #white {background-color: rgb(255, 255, 255)}
-    #red {background-color: rgb(220, 0, 0)}
-    #blue {background-color: rgb(0, 0, 220)}
-    #yellow {background-color: rgb(220, 220, 0)}
-    #green {background-color: rgb(0, 220, 0)}
-    #purple {background-color: rgb(220, 0, 220)}
-    #cyan {background-color: rgb(0, 220, 220)}
-    #none {background-color: rgb(30, 30, 30)}
+    #status-0 {background-color: rgb(240, 240, 240)}
+    #status-1 {background-color: rgb(0, 220, 0)}
+    #status-2 {background-color: rgb(220, 220, 0)}
+    #status-3 {background-color: rgb(220, 0, 0)}
+    #status-4 {background-color: rgb(220, 0, 220)}
+    #status-5 {background-color: rgb(0, 0, 220)}
+    #status-6 {background-color: rgb(0, 220, 220)}
+    #status-7 {background-color: rgb(30, 30, 30)}
   }
   #luxConnect {
     font-size: 190px;
+  }
+  .error {
+    color: #AC1616;
   }
 }

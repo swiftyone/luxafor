@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{ user.username }}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-list no-lines>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-6 offset-3>
+          <img id="avatar" class="status-{{ user.status }}" src="https://www.gravatar.com/avatar/{{ user.email | gravatarPipe }}?s=250">
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-item class="noDataYet" *ngIf="noDataYet">
+      {{ noDataYet }}
+    </ion-item>
+  </ion-list>
+  <div *ngFor="let gantt of gantts">
+    <div class="datum">{{ gantt.datum | datumPipe }}</div>
+    <div class="gantt">
+      <div class="block block-{{ block.status }}" *ngFor="let block of gantt.blocks" [style.width]="block.width">{{ block.time }}</div>
+    </div>
+    <div class="times">
+      <div>8:00</div>
+      <div>14:00</div>
+      <div>20:00</div>
+    </div>
+    <hr>
+  </div>
+</ion-content>
