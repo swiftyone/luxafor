@@ -7,6 +7,8 @@ import { ActionSheetController } from 'ionic-angular';
 import { ProfilePage } from '../profile/profile';
 import { HttpClient } from "@angular/common/http";
 import { HttpHeaders } from '@angular/common/http';
+import * as config from '../../app/environment/config';
+import * as google from 'googleapis';
 
 @Component({
   selector: 'page-team',
@@ -62,9 +64,6 @@ export class TeamPage {
   }
   
   poke(user) {
-    let headers = new HttpHeaders();
-    headers.append('Content-Type', 'application/json');
-    headers.append('Authorization', `Bearer AIzaSyCrwRzqR5fO1-oVsQ_jTuPw3EMlZODSQa0`);
     this.actionSheetCtrl.create({
       title: 'Poke colleagues',
       buttons: [
@@ -72,19 +71,25 @@ export class TeamPage {
           text: 'Poke',
           handler: () => {
             console.log(user);
-            this.http.post('https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send', {
-              "message":{
-                "token" : "dh3D7I6N8Cw:APA91bHzwFkwKPsqsU9WhqjEUw5F_lWXLNl8K781uEfa_qk7qid2GnhjUty0ls4UP99sUKPgHlc-ZoJnZXrKnmDDdCbfw5ufIjnefT1AFlj3TfP8th0_681bjUU8MXcy4GrOi5tAEn1t",
-                "notification" : {
-                  "body" : "This is an FCM notification message!",
-                  "title" : "FCM Message",
+            this.getAccessToken().then(token => {
+              let headers = new HttpHeaders();
+              headers.append('Content-Type', 'application/json');
+              headers.append('Authorization', 'Bearer ' + token);
+              
+              this.http.post('https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send', {
+                "message":{
+                  "token" : "dh3D7I6N8Cw:APA91bHzwFkwKPsqsU9WhqjEUw5F_lWXLNl8K781uEfa_qk7qid2GnhjUty0ls4UP99sUKPgHlc-ZoJnZXrKnmDDdCbfw5ufIjnefT1AFlj3TfP8th0_681bjUU8MXcy4GrOi5tAEn1t",
+                  "notification" : {
+                    "body" : "This is an FCM notification message!",
+                    "title" : "FCM Message",
+                  }
                 }
-              }
-            }, {
-              headers: headers
-            }).subscribe(data => {
-              console.log(data);
-            })
+              }, {
+                headers: headers
+              }).subscribe(data => {
+                console.log(data);
+              });
+            });
           }
         },
         {
@@ -98,4 +103,26 @@ export class TeamPage {
   goProfile(user) {
     this.navCtrl.push(ProfilePage, {user: user});
   }
+
+  getAccessToken() {
+    return new Promise(function(resolve, reject) {
+      var key = config.config.service_account;
+      var jwtClient = new google.auth.JWT(
+        key.client_email,
+        null,
+        key.private_key,
+        ['https://www.googleapis.com/auth/cloud-platform'],
+        null
+      );
+      jwtClient.authorize(function(err, tokens) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(tokens.access_token);
+      });
+    });
+  }
+  
+
 }
