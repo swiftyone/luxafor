@@ -15,21 +15,23 @@
       <ion-input [(ngModel)]="luxname" placeholder="Luxafor-Device-Name"></ion-input>
     </ion-item>
     <button ion-button [style.background-color]="connectColor" full (click)="connect()">{{ connectTitle }}</button>
-    <!-- <ion-icon name="settings"></ion-icon> -->
+    <ion-item *ngIf="error" class="error" text-center>
+      {{ error }}
+    </ion-item>
     <ion-list-header no-lines>
-      <ion-icon name="color-fill"></ion-icon> Color
+      <ion-icon name="color-fill"></ion-icon> Farbe
     </ion-list-header>
     <div id="setColors">
       <ion-grid>
         <ion-row>
           <ion-col col-3 *ngFor="let i of [0,1,2,3,4,5,6,7]">
-            <button id="status-{{ i }}" (click)="setColor(i)"><ion-icon *ngIf="activeColor == i" name="checkmark"></ion-icon></button>
+            <button class="status-{{ i }}" (click)="setColor(i)"><ion-icon *ngIf="activeColor == i" name="checkmark"></ion-icon></button>
           </ion-col>
       </ion-row>
       </ion-grid>
     </div>
     <ion-list-header>
-        <ion-icon name="sunny"></ion-icon> Brightness
+      <ion-icon name="sunny"></ion-icon> Helligkeit
     </ion-list-header>
     <ion-item>
       <ion-range min="0" max="255" step="5" [(ngModel)]="brightness" (ionChange)="changeBrightness()">
@@ -37,9 +39,16 @@
         <ion-icon range-right name="sunny"></ion-icon>
       </ion-range>
     </ion-item>
-    <ion-item *ngIf="error" class="error" text-center>
-      {{ error }}
-    </ion-item>
+    <ion-list-header>
+      <ion-icon name="time"></ion-icon> Zeiten von heute
+    </ion-list-header>
+    <div class="statusTimes" *ngIf="statusTimes">
+      <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7]">
+        <span class="status-{{i}} status-dot" item-left></span>
+        <span [ngClass]="{'active': activeColor == i, 'inactive': activeColor != i, 'zero': statusTimes[i] == 0}" class="time">{{ statusTimes[i] | minuteSecondPipe }}</span>
+        <span *ngIf="statusTimes[i] > 7200" item-right class="time-alert"><ion-icon name="alert"></ion-icon></span>
+      </ion-item>
+    </div>
   </ion-list>
 	<p *ngFor="let device of devices">{{ device }}</p>
 </ion-content>

@@ -86,4 +86,10 @@ export class FirebaseProvider {
   getStorageUid() {
     return this.storage.get('uid');
   }
+  setStorageActiveColor(num: number) {
+    return this.storage.set('activeColor', num);
+  }
+  getStorageActiveColor() {
+    return this.storage.get('activeColor');
+  }
 }

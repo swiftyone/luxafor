@@ -21,7 +21,7 @@
   <div *ngFor="let gantt of gantts">
     <div class="datum">{{ gantt.datum | datumPipe }}</div>
     <div class="gantt">
-      <div class="block block-{{ block.status }}" *ngFor="let block of gantt.blocks" [style.width]="block.width">{{ block.time }}</div>
+      <div (click)="showTime(block.time)" class="block block-{{ block.status }}" *ngFor="let block of gantt.blocks" [style.width]="block.width"></div>
     </div>
     <div class="times">
       <div>8:00</div>

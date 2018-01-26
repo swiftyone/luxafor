@@ -5,7 +5,7 @@ import { MyApp } from './app.component';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
-
+import { HttpClientModule } from '@angular/common/http';
 import { LuxaforPage } from '../pages/luxafor/luxafor';
 import { TimePage } from '../pages/time/time';
 import { TeamPage } from '../pages/team/team';
@@ -21,6 +21,9 @@ import { LuxaforProvider } from '../providers/luxafor/luxafor';
 import { FirebaseProvider } from '../providers/firebase/firebase';
 import { GravatarPipe } from './pipes/gravatarPipe';
 import { DatumPipe } from './pipes/datumPipe';
+import { MinuteSecondPipe } from './pipes/minuteSecondPipe';
+import { Firebase } from '@ionic-native/firebase';
+import * as config from './environment/config';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,7 @@ import { DatumPipe } from './pipes/datumPipe';
     LoginPage,
     SettingsPage,
     GravatarPipe,
+    MinuteSecondPipe,
     DatumPipe,
     ProfilePage
   ],
@@ -41,16 +45,10 @@ import { DatumPipe } from './pipes/datumPipe';
       tabsHideOnSubPages: true,
     }),
     IonicStorageModule.forRoot(),
-    AngularFireModule.initializeApp({
-      apiKey: "AIzaSyBQLhpVgOofkInfYFzWp8Bhw8D9VP5Fx-E",
-      authDomain: "saspb-e171a.firebaseapp.com",
-      databaseURL: "https://saspb-e171a.firebaseio.com",
-      projectId: "saspb-e171a",
-      storageBucket: "",
-      messagingSenderId: "219493189123"
-    }),
+    AngularFireModule.initializeApp(config.config.firebase),
     AngularFireAuthModule,
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    HttpClientModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -69,7 +67,8 @@ import { DatumPipe } from './pipes/datumPipe';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     BLE,
     LuxaforProvider,
-    FirebaseProvider
+    FirebaseProvider,
+    Firebase
   ]
 })
 export class AppModule {}

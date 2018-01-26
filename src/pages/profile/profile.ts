@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { LuxaforProvider } from '../../providers/luxafor/luxafor';
 
 @IonicPage()
 @Component({
@@ -12,7 +13,7 @@ export class ProfilePage {
   gantts = [];
   data: any;
   noDataYet: string = null;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public af: AngularFireDatabase) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public af: AngularFireDatabase, public luxafor: LuxaforProvider) {
     this.user = navParams.get('user');
     af.object(`status/${(this.user as any).$key}`).valueChanges().subscribe(data => {
       this.data = data;
@@ -50,6 +51,10 @@ export class ProfilePage {
       status: index == 0 ? 7 : this.data[key][prev],
       time: showTime.getHours() + ":" + minuteStr
     }
+  }
+
+  showTime(time) {
+    this.luxafor.showToast(time);
   }
 
 }
