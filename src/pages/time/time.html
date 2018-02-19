@@ -1,17 +1,19 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Contact
+      Zeiten
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-list-header>Follow us on Twitter</ion-list-header>
-    <ion-item>
-      <ion-icon name="ionic" item-start></ion-icon>
-      @ionicframework
-    </ion-item>
+    <div class="statusTimes" *ngIf="statusTimes">
+      <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7]">
+        <span class="status-{{i}} status-dot" item-left></span>
+        <span [ngClass]="{'active': activeColor == i, 'inactive': activeColor != i, 'zero': statusTimes[i] == 0}" class="time">{{ statusTimes[i] | minuteSecondPipe }}</span>
+        <span *ngIf="statusTimes[i] > 7200" item-right class="time-alert"><ion-icon name="alert"></ion-icon></span>
+      </ion-item>
+    </div>
   </ion-list>
 </ion-content>

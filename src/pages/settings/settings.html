@@ -4,8 +4,21 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
   <ion-list no-lines>
+    <ion-list-header no-lines>Luxafor Settings</ion-list-header>
+    <ion-item>
+      <ion-input [(ngModel)]="luxname" placeholder="Luxafor-Device-Name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <button ion-button block default [style.background-color]="connectColor" (click)="connect()">{{ connectTitle }}</button>
+    </ion-item>
+    <ion-item>
+      <button ion-button block default (click)="setColors()">Status auswählen</button>
+    </ion-item>
+    <ion-list-header no-lines>
+      User Settings
+    </ion-list-header>
     <ion-grid>
       <ion-row>
         <ion-col col-6 offset-3>

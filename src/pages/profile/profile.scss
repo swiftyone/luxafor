@@ -47,21 +47,12 @@ page-profile {
   .block:hover {
     width: 100px;
   }
-  .block-0 {
-    background-color: color($colors, status0);
-    color: #111;
-  }
+  .block-0 {background-color: color($colors, status0)}
   .block-1 {background-color: color($colors, status1)}
-  .block-2 {
-    background-color: color($colors, status2);
-    color: #111;
-  }
+  .block-2 {background-color: color($colors, status2)}
   .block-3 {background-color: color($colors, status3)}
   .block-4 {background-color: color($colors, status4)}
   .block-5 {background-color: color($colors, status5)}
-  .block-6 {
-    background-color: color($colors, status6);
-    color: #111;
-  }
+  .block-6 {background-color: color($colors, status6)}
   .block-7 {background-color: color($colors, status7)}
 }

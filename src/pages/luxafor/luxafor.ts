@@ -7,169 +7,177 @@ import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Firebase } from '@ionic-native/firebase';
 import { Platform } from 'ionic-angular';
-import * as config from '../../app/environment/config';
 
 @Component({
     selector: 'page-luxafor',
     templateUrl: 'luxafor.html'
 })
 export class LuxaforPage {
-  statusTimes: any;
-  connectColor: string = '#555';
-  connectTitle: string = 'Verbinden';
-  luxname: string;
+  connectColor: string = '#444';
   brightness: number = 128;
   activeColor: number;
   rgb: Array<boolean> = [true, true, true];
-  error: string;
-
+  luxname: string;
+  spinner: boolean = false;
+  showColors = new Array();
+  gantts = [];
+  noDataYet: string = null;
   constructor(public navCtrl: NavController, private luxaforProvider: LuxaforProvider, public fb: FirebaseProvider, public af: AngularFireDatabase, private fbap: Firebase, public plt: Platform) {
-    // get last active Color
-    this.fb.getStorageActiveColor().then(num => {
-      this.activeColor = num;
-    })
-    // set luxname
+    /*
+     * ANALYTICS
+    */
+    // this.plt.ready().then(() => {
+    //   console.log('ready');
+    //   // set Screen
+    //   this.fbap.setScreenName('Luxafor').then((res) => {
+    //     console.log('test 1');
+    //   }).catch((error) => {
+    //     console.error(error);
+    //   });
+    //   // log view event
+    //   this.fbap.logEvent('page_view', {page: "luxafor"}).then((res) => {
+    //     console.log('test 2');
+    //   }).catch((error) => {
+    //     console.error(error);
+    //   });
+    //   this.fbap.getToken().then(token => {
+    //     console.log(token);
+    //   });
+    //   this.fbap.hasPermission().then((res) => {
+    //     console.log(res);
+
+    //   }).catch(err => {
+    //     this.fbap.grantPermission().then((res) => {
+    //       console.log(res);
+    //     }).catch((err) => {
+    //       console.log(err);
+    //     })
+    //   })
+    // });
+  }
+
+  ionViewWillEnter() {
+    // get showColors
+    this.luxaforProvider.getShowColors().then(data => {
+      if (data != null)
+        this.showColors = data;
+      else
+        this.showColors = [true, true, true, true, true, true, true, true];
+    });
+
+    // connect
+    this.luxaforProvider.checkBluetooth().then(() => {
+      this.luxaforProvider.isConnected().then(() => {
+        this.connectColor = '#32db64';
+      }).catch(() => {
+        this.luxaforProvider.showToast(this.luxname);
+        this.luxaforProvider.connectLuxafor(this.luxname).then(() => {
+          this.connectColor = '#32db64';
+        }).catch(() => {
+          this.connectColor = '#e2731d';
+        });
+      });
+    }).catch(() => {
+      this.connectColor = '#f53d3d';
+    });
+  }
+
+  ionViewDidLoad() {
+    // get luxaforname
     this.luxaforProvider.getLuxname().then((name) => {
       this.luxname = name;
     }).catch((err) => {
       this.luxaforProvider.showToast(err);
     });
-    this.getTimes().then(data => {
-      this.statusTimes = data;
-      setInterval(function() {
-        // console.log(this.statusTimes[5]);
-        this.statusTimes[this.activeColor] += 1;
-      }.bind(this), 1000);
+    
+    // get last active Color
+    this.fb.getStorageActiveColor().then(num => {
+      this.activeColor = num;
     });
-    // set buttoncolor, check bluetooth, check connection
-    // this.luxaforProvider.checkBluetooth().then(() => {
-    //   this.luxaforProvider.isConnected().then(() => {
-    //     this.connectTitle = 'Disconnect';
-    //     this.connectColor = '#32db64';
-    //   }).catch(() => {
-    //     this.connectTitle = 'Connect';
-    //     this.connectColor = '#488aff';
-    //   });
-    // }).catch(() => {
-    //   this.connectTitle = 'Enable Bluetooth';
-    //   this.connectColor = '#f53d3d';
-    // });
-    this.plt.ready().then(() => {
-      console.log('ready');
-      // set Screen
-      this.fbap.setScreenName('Luxafor').then((res) => {
-        console.log('test 1');
-      }).catch((error) => {
-        console.error(error);
-      });
-      // log view event
-      this.fbap.logEvent('page_view', {page: "luxafor"}).then((res) => {
-        console.log('test 2');
-      }).catch((error) => {
-        console.error(error);
-      });
-      this.fbap.getToken().then(token => {
-        console.log(token);
-      });
-      this.fbap.hasPermission().then((res) => {
-        console.log(res);
 
-      }).catch(err => {
-        this.fbap.grantPermission().then((res) => {
-          console.log(res);
-        }).catch((err) => {
-          console.log(err);
-        })
-      })
-    });
+    this.updateGantt();
+
+    // observer db status
+    // this.fb.getStorageUid().then(uid => {
+    //   if (uid != null) {
+    //     this.af.object(`users/${uid}`).valueChanges().subscribe(data => {
+    //       let status = (data as any).status;
+    //       this.fb.updateStatus(status).then(() => {
+    //         this.fb.setStorageActiveColor(status).then(()=> {
+    //           this.activeColor = status;
+    //         });
+    //       }).catch(() => {
+    //         this.activeColor = null;
+    //       });
+    //       this.luxaforProvider.setColor(status, this.brightness).catch(() => {});
+    //     });
+    //   }
+    // });
+
+    setInterval(() => {
+      if (this.activeColor && this.brightness)
+        this.luxaforProvider.setColor(this.activeColor, this.brightness).catch(()=>{});
+    }, 30000);
   }
 
-
+  // check bluetooth, check connection
   connect() {
     this.luxaforProvider.checkBluetooth().then(() => {
-      this.connectColor = '#488aff';
-    }).catch(() => {
-      this.connectColor = '#f53d3d';
-      return null;
-    });
-
-    this.luxaforProvider.isConnected().then(() => {
-      this.luxaforProvider.disconnectLuxafor().then(() => {
-        this.connectTitle = 'Connect';
-        this.connectColor = '#488aff';
-      }).catch(() => {
-        this.connectTitle = 'Disconnect';
+      this.luxaforProvider.isConnected().then(() => {
         this.connectColor = '#32db64';
+      }).catch(() => {
+        this.spinner = true;
+        this.luxaforProvider.connectLuxafor(this.luxname).then(() => {
+          this.connectColor = '#32db64';
+          this.spinner = false;
+        }).catch(() => {
+          this.connectColor = '#e2731d';
+          this.spinner = false;
+        });
       });
     }).catch(() => {
-      this.luxaforProvider.getLuxname().then(name => {
-        if (name != this.luxname)
-          this.luxaforProvider.setLuxname(this.luxname);
-        this.luxaforProvider.connectLuxafor(this.luxname).then(() => {
-          this.connectTitle = 'Disconnect';
-          this.connectColor = '#32db64';
-        }).catch(() => {
-          this.connectTitle = 'Connect';
-          this.connectColor = '#f53d3d';
-        });
-      })
+      this.connectColor = '#f53d3d';
     });
   }
 
   setColor(index) {
-    this.fb.updateStatus(index).then(() => {
-      this.fb.setStorageActiveColor(index).then(()=> {
-        this.activeColor = index;
-      })
-    }).catch(() => {
-      this.activeColor = null;
-    });
-    this.luxaforProvider.setColor(index, this.brightness).then(() => {
-      this.error = null;      
-    }).catch(() => {
-      this.error = 'Connect Luxafor Device.';
-    });
+    if (index != this.activeColor) {
+      this.fb.updateStatus(index).then(() => {
+        this.updateGantt();
+        this.fb.setStorageActiveColor(index).then(()=> {
+          this.activeColor = index;
+        });
+      }).catch((data) => {
+        this.activeColor = null;
+        this.luxaforProvider.showToast('Bitte neu anmelden.');
+      });
+    }
+    this.luxaforProvider.setColor(index, this.brightness).catch(()=>{});
   }
 
   changeBrightness() {
-    this.luxaforProvider.setColor(this.activeColor, this.brightness).then(() => {
-      this.error = null;      
-    }).catch(() => {
-      this.error = 'Connect Luxafor Device.';
-    });
+    this.luxaforProvider.setColor(this.activeColor, this.brightness).catch(()=>{});
+  }
+
+  showTime(time) {
+    this.luxaforProvider.showToast('Status gesetzt um ' + time + ' Uhr.');
   }
 
   goSettings() {
     this.navCtrl.push(SettingsPage);
   }
 
-  getTimes(): Promise<any> {
-    return this.fb.getCurrentAuthUser().then(user => {
-      let statusTimes = [0, 0, 0, 0, 0, 0, 0, 0];
+  updateGantt() {
+    this.fb.getStorageUid().then(uid => {
       let now = new Date();
       let yyyy = now.getFullYear();
       let mm = now.getMonth();
       let dd = now.getDate();
-      return new Promise(resolve => {
-        this.af.object(`status/${(user as any).uid}/${dd}-${mm}-${yyyy}`).valueChanges().subscribe(data => {
-          try {
-            let times = Object.keys(data);
-            let prev = times.shift();
-            for(let time of times) {
-              let diff = Number(time) - Number(prev);
-              statusTimes[data[prev]] += Math.round(diff / 1000);
-              prev = time;
-            }
-            let diff = Number(now) - Number(prev);
-            statusTimes[data[prev]] += Math.round(diff / 1000);
-            resolve(statusTimes);
-          } catch (err) {
-            this.activeColor = null;
-            resolve(statusTimes);
-          }
-        })
+      this.fb.getGantt(uid, `${yyyy}-${mm}-${dd}`).then(data => {
+        this.gantts = data;
+      }).catch(data => {
+        this.noDataYet = data;
       });
     });
   }
-
 }

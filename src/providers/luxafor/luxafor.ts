@@ -29,8 +29,8 @@ export class LuxaforProvider {
 
   setColor(index, brightness): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.storage.get('deviceid').then(deviceid => {
-        this.ble.isConnected(deviceid).then(data => {
+      return this.storage.get('deviceid').then(deviceid => {
+        return this.ble.isConnected(deviceid).then(data => {
           let rgb = this.colors[index];
           rgb.forEach((elem, index) => {
             switch (elem) {
@@ -41,13 +41,13 @@ export class LuxaforProvider {
               this.opts[index + 2] = 0;
             }
           });
-          this.ble.writeWithoutResponse(deviceid, '1234', '1235', this.opts.buffer).then(()=> {
-            resolve();
+          return this.ble.writeWithoutResponse(deviceid, '1234', '1235', this.opts.buffer).then(()=> {
+            resolve('yep');
           }).catch(data => {
-            reject();
+            reject(data);
           });
         }).catch(data => {
-          reject();
+          reject(data);
         });
       });
     });
@@ -91,6 +91,10 @@ export class LuxaforProvider {
   }
 
   checkBluetooth(): Promise<any> {
+    return this.ble.isEnabled();
+  }
+
+  enableBluetooth(): Promise<any> {
     return this.ble.isEnabled()
     .then(data => {
       // this.showToast(String(data));
@@ -111,5 +115,12 @@ export class LuxaforProvider {
       position: 'bottom'
     });
     toast.present();
+  }
+
+  storeShowColors(data) {
+    this.storage.set('showColors', data);
+  }
+  getShowColors() {
+    return this.storage.get('showColors');
   }
 }

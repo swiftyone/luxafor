@@ -4,6 +4,10 @@
       Luxafor
     </ion-title>
     <ion-buttons end>
+      <button ion-button icon-only (click)="connect()">
+        <ion-spinner *ngIf="spinner" name="crescent"></ion-spinner>
+        <ion-icon *ngIf="!spinner" [ngStyle]="{'color': connectColor}" name="bluetooth"></ion-icon>
+      </button>
       <button ion-button icon-only (click)="goSettings()"><ion-icon name="cog"></ion-icon></button>
     </ion-buttons>
   </ion-navbar>
@@ -11,23 +15,18 @@
 
 <ion-content scroll>
   <ion-list no-lines>
-    <ion-item>
-      <ion-input [(ngModel)]="luxname" placeholder="Luxafor-Device-Name"></ion-input>
-    </ion-item>
-    <button ion-button [style.background-color]="connectColor" full (click)="connect()">{{ connectTitle }}</button>
-    <ion-item *ngIf="error" class="error" text-center>
-      {{ error }}
-    </ion-item>
     <ion-list-header no-lines>
       <ion-icon name="color-fill"></ion-icon> Farbe
     </ion-list-header>
     <div id="setColors">
       <ion-grid>
         <ion-row>
-          <ion-col col-3 *ngFor="let i of [0,1,2,3,4,5,6,7]">
-            <button class="status-{{ i }}" (click)="setColor(i)"><ion-icon *ngIf="activeColor == i" name="checkmark"></ion-icon></button>
-          </ion-col>
-      </ion-row>
+          <ng-container *ngFor="let i of [0,1,2,3,4,5,6,7]">
+            <ion-col col-3 *ngIf="showColors[i]">
+              <button class="status-{{ i }}" (click)="setColor(i)"><ion-icon *ngIf="activeColor == i" name="checkmark"></ion-icon></button>
+            </ion-col>
+          </ng-container>
+        </ion-row>
       </ion-grid>
     </div>
     <ion-list-header>
@@ -40,15 +39,17 @@
       </ion-range>
     </ion-item>
     <ion-list-header>
-      <ion-icon name="time"></ion-icon> Zeiten von heute
+      <ion-icon name="time"></ion-icon> Zeitstrahl von heute
     </ion-list-header>
-    <div class="statusTimes" *ngIf="statusTimes">
-      <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7]">
-        <span class="status-{{i}} status-dot" item-left></span>
-        <span [ngClass]="{'active': activeColor == i, 'inactive': activeColor != i, 'zero': statusTimes[i] == 0}" class="time">{{ statusTimes[i] | minuteSecondPipe }}</span>
-        <span *ngIf="statusTimes[i] > 7200" item-right class="time-alert"><ion-icon name="alert"></ion-icon></span>
-      </ion-item>
+    <div *ngFor="let gantt of gantts">
+      <div class="gantt">
+        <div (click)="showTime(block.time)" class="block block-{{ block.status }}" *ngFor="let block of gantt.blocks" [style.width]="block.width"></div>
+      </div>
+      <div class="times">
+        <div>8:00</div>
+        <div>14:00</div>
+        <div>20:00</div>
+      </div>
     </div>
   </ion-list>
-	<p *ngFor="let device of devices">{{ device }}</p>
 </ion-content>

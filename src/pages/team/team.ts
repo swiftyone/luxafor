@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
-import { AngularFireList } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 import { ActionSheetController } from 'ionic-angular';
 import { ProfilePage } from '../profile/profile';
 import { HttpClient } from "@angular/common/http";
 import { HttpHeaders } from '@angular/common/http';
 import * as config from '../../app/environment/config';
-import * as google from 'googleapis';
+
+// import 'https://apis.google.com/js/api.js';
+declare var gapi: any;
 
 @Component({
   selector: 'page-team',
@@ -16,6 +17,7 @@ import * as google from 'googleapis';
 })
 export class TeamPage {
   users: Observable<any[]>;
+  
   constructor(public navCtrl: NavController, public fb: FirebaseProvider, public actionSheetCtrl: ActionSheetController, private http: HttpClient) {
     // this.users = fb.getAllUsers('status').valueChanges();
     this.users = fb.getAllUsers('status').snapshotChanges().map(actions => {
@@ -71,10 +73,10 @@ export class TeamPage {
           text: 'Poke',
           handler: () => {
             console.log(user);
-            this.getAccessToken().then(token => {
+            this.getAccessToken().then(accessToken => {
               let headers = new HttpHeaders();
               headers.append('Content-Type', 'application/json');
-              headers.append('Authorization', 'Bearer ' + token);
+              headers.append('Authorization', 'Bearer ' + accessToken);
               
               this.http.post('https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send', {
                 "message":{
@@ -107,11 +109,11 @@ export class TeamPage {
   getAccessToken() {
     return new Promise(function(resolve, reject) {
       var key = config.config.service_account;
-      var jwtClient = new google.auth.JWT(
+      var jwtClient = new gapi.auth.JWT(
         key.client_email,
         null,
         key.private_key,
-        ['https://www.googleapis.com/auth/cloud-platform'],
+        ['https://www.googleapis.com/auth/firebase.messaging'],
         null
       );
       jwtClient.authorize(function(err, tokens) {

@@ -1,3 +1,34 @@
-page-contact {
-
+page-time {
+  .statusTimes {
+    .status-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .time {
+      margin-left: 20px;
+    }
+    .time-alert {
+      font-size: 1.3em;
+      color: #AC1616;
+    }
+    .zero {
+      color: #ddd !important;
+    }
+    .inactive {
+      color: #888;
+    }
+    .active {
+      color: #111;
+    }
+  }
+  .status-0 {background-color: color($colors, status0)}
+  .status-1 {background-color: color($colors, status1)}
+  .status-2 {background-color: color($colors, status2)}
+  .status-3 {background-color: color($colors, status3)}
+  .status-4 {background-color: color($colors, status4)}
+  .status-5 {background-color: color($colors, status5)}
+  .status-6 {background-color: color($colors, status6)}
+  .status-7 {background-color: color($colors, status7)}
 }
