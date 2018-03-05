@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Anstupser</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngFor="let poke of pokes">
+    <ion-card *ngIf="poke.user | async; let user; else loading" [ngClass]="'status-' + user.status">
+      <ion-item>
+        <ion-avatar item-start>
+          <img src="https://www.gravatar.com/avatar/{{ user.email | gravatarPipe }}?s=50">
+        </ion-avatar>
+        <h2>{{ user.username }}</h2>
+        <p class="time">{{ poke.time | date: 'H:mm' }}</p>
+      </ion-item>
+      <ion-card-content *ngIf="poke.message">
+        <p>{{ poke.message }}</p>
+      </ion-card-content>
+      <ion-row>
+        <ion-col>
+          <button ion-button icon-left full clear color="danger" small (click)="decline(poke.pid)">
+            <ion-icon name="trash"></ion-icon>
+            <div>Verwerfen</div>
+          </button>
+        </ion-col>
+        <ion-col>
+          <button [disabled]="user.status == 3" ion-button icon-left full clear small (click)="respond(poke)">
+            <ion-icon name="send"></ion-icon>
+            <div>Antworten</div>
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </ng-container>
+  <ng-container *ngIf="noPokes">
+    <p class="noPokes">Du hast zur Zeit keine Anstupser.</p>
+  </ng-container>
+</ion-content>

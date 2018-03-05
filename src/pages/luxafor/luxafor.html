@@ -38,12 +38,12 @@
         <ion-icon range-right name="sunny"></ion-icon>
       </ion-range>
     </ion-item>
-    <ion-list-header>
-      <ion-icon name="time"></ion-icon> Zeitstrahl von heute
-    </ion-list-header>
-    <div *ngFor="let gantt of gantts">
-      <div class="gantt">
-        <div (click)="showTime(block.time)" class="block block-{{ block.status }}" *ngFor="let block of gantt.blocks" [style.width]="block.width"></div>
+    <div *ngIf="ganttBool">
+      <ion-list-header>
+        <ion-icon name="time"></ion-icon> Zeitstrahl von heute
+      </ion-list-header>
+      <div class="gantt" *ngIf="gantts">
+        <div (click)="showTime(block.time)" class="block block-{{ block.status }}" *ngFor="let block of gantts[0].blocks" [style.width]="block.width"></div>
       </div>
       <div class="times">
         <div>8:00</div>

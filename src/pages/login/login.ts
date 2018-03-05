@@ -4,15 +4,15 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { ToastController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
+import { StorageProvider } from '../../providers/storage/storage';
 
-@IonicPage()
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
 })
 export class LoginPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public angularFireAuth: AngularFireAuth, private toastCtrl: ToastController, public fb: FirebaseProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public angularFireAuth: AngularFireAuth, private toastCtrl: ToastController, public fb: FirebaseProvider, public storage: StorageProvider) {
     this.angularFireAuth.authState.subscribe(user => {
       if (user) {
         navCtrl.setRoot(TabsPage);
@@ -26,7 +26,7 @@ export class LoginPage {
         this.fb.userExists(user.uid).catch(() => {
           this.fb.addUserByEmail(user.email, user.uid);
         }).then(()=>{
-          this.fb.setStorageUid(user.uid);
+          this.storage.setStorageUid(user.uid);
           this.navCtrl.setRoot(TabsPage);
         });
       } else {

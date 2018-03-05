@@ -3,7 +3,7 @@
     <name>SASPB</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="fabry@wiro-consultants.de" href="http://wiro-consultants.com">Wiro Consultants</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.178.46:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />

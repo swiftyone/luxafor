@@ -13,6 +13,7 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
 import { ProfilePage } from '../pages/profile/profile';
 import { SettingsPage } from '../pages/settings/settings';
+import { NotificationsPage } from '../pages/notifications/notifications';
 import { BLE } from '@ionic-native/ble';
 import { IonicStorageModule } from '@ionic/storage';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -23,6 +24,9 @@ import { GravatarPipe } from './pipes/gravatarPipe';
 import { DatumPipe } from './pipes/datumPipe';
 import { MinuteSecondPipe } from './pipes/minuteSecondPipe';
 import { Firebase } from '@ionic-native/firebase';
+import { AnalyticsProvider } from '../providers/analytics/analytics';
+import { PushProvider } from '../providers/push/push';
+import { StorageProvider } from '../providers/storage/storage';
 import * as config from './environment/config';
 
 @NgModule({
@@ -34,10 +38,11 @@ import * as config from './environment/config';
     TabsPage,
     LoginPage,
     SettingsPage,
+    ProfilePage,
+    NotificationsPage,
     GravatarPipe,
     MinuteSecondPipe,
     DatumPipe,
-    ProfilePage
   ],
   imports: [
     BrowserModule,
@@ -59,7 +64,8 @@ import * as config from './environment/config';
     TabsPage,
     LoginPage,
     SettingsPage,
-    ProfilePage
+    ProfilePage,
+    NotificationsPage
   ],
   providers: [
     StatusBar,
@@ -68,7 +74,10 @@ import * as config from './environment/config';
     BLE,
     LuxaforProvider,
     FirebaseProvider,
-    Firebase
+    Firebase,
+    AnalyticsProvider,
+    PushProvider,
+    StorageProvider
   ]
 })
 export class AppModule {}

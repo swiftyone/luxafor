@@ -4,34 +4,39 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { LoginPage } from '../login/login';
 import { LuxaforProvider } from '../../providers/luxafor/luxafor';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { StorageProvider } from '../../providers/storage/storage';
+import { User } from '../../app/interfaces';
 import md5 from 'crypto-md5';
 
-@IonicPage()
 @Component({
   selector: 'page-settings',
   templateUrl: 'settings.html',
 })
 export class SettingsPage {
+  user: User;
   username: string = '';
-  user: Object;
   connectColor: string = '#488aff';
   connectTitle: string = 'Verbinden';
   luxname: string;
-  constructor(public navCtrl: NavController, private luxaforProvider: LuxaforProvider, private alertCtrl: AlertController, public navParams: NavParams, public angularFireAuth: AngularFireAuth, public luxafor: LuxaforProvider, public fb: FirebaseProvider) {
-    fb.getCurrentAuthUser().then(user => {
-      this.user = user;
-      fb.getUserByUid((user as any).uid).then(data => {
-        this.username = (data as any).username;
-      });
+  constructor(public navCtrl: NavController, public storage: StorageProvider, 
+    private alertCtrl: AlertController, public navParams: NavParams, 
+    public angularFireAuth: AngularFireAuth, public luxafor: LuxaforProvider, 
+    public fb: FirebaseProvider) {}
+
+  ionViewDidLoad() {
+    this.storage.getStorageUid().then(uid => {
+      this.fb.getUserByUid(uid).then((data:User) => {
+        this.user = data;
+      }).catch(data => console.log(data));
     });
 
-    this.luxaforProvider.getLuxname().then((name) => {
+    this.luxafor.getLuxname().then((name) => {
       this.luxname = name;
     }).catch((err) => {
-      this.luxaforProvider.showToast(err);
+      this.luxafor.showToast(err);
     });
 
-    this.luxaforProvider.isConnected().then(() => {
+    this.luxafor.isConnected().then(() => {
       this.connectTitle = 'Disconnect';
       this.connectColor = '#32db64';
     }).catch(() => {
@@ -41,15 +46,15 @@ export class SettingsPage {
   }
 
   connect() {
-    this.luxaforProvider.checkBluetooth().then(() => {
+    this.luxafor.checkBluetooth().then(() => {
       this.connectColor = '#488aff';
     }).catch(() => {
       this.connectColor = '#f53d3d';
       return null;
     });
 
-    this.luxaforProvider.isConnected().then(() => {
-      this.luxaforProvider.disconnectLuxafor().then(() => {
+    this.luxafor.isConnected().then(() => {
+      this.luxafor.disconnectLuxafor().then(() => {
         this.connectTitle = 'Connect';
         this.connectColor = '#488aff';
       }).catch(() => {
@@ -57,10 +62,10 @@ export class SettingsPage {
         this.connectColor = '#32db64';
       });
     }).catch(() => {
-      this.luxaforProvider.getLuxname().then(name => {
+      this.luxafor.getLuxname().then(name => {
         if (name != this.luxname)
-          this.luxaforProvider.setLuxname(this.luxname);
-        this.luxaforProvider.connectLuxafor(this.luxname).then(() => {
+          this.luxafor.setLuxname(this.luxname);
+        this.luxafor.connectLuxafor(this.luxname).then(() => {
           this.connectTitle = 'Disconnect';
           this.connectColor = '#32db64';
         }).catch(() => {
@@ -86,10 +91,10 @@ export class SettingsPage {
         data.forEach(element => {
           result[+element] = true;
         });
-        this.luxaforProvider.storeShowColors(result);
+        this.luxafor.storeShowColors(result);
       }
     });
-    this.luxaforProvider.getShowColors().then(data => {
+    this.luxafor.getShowColors().then(data => {
       colors.forEach((color, index) => {
         alert.addInput({
           type: 'checkbox',

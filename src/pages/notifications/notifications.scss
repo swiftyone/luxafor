@@ -1,0 +1,32 @@
+page-notifications {
+  ion-card, ion-card > ion-item {
+    background-color: rgb(245, 245, 245) !important;
+  }
+  ion-card-content {
+    padding-bottom: 0px !important;
+  }
+  ion-card {
+    border-top: 3px solid rgb(245, 245, 245);
+    .time {
+      margin-top: 5px;
+      margin-bottom: 0px;
+    }
+  }
+  .noPokes {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+  }
+  .status-0 {border-color: color($colors, status0)}
+  .status-1 {border-color: color($colors, status1)}
+  .status-2 {border-color: color($colors, status2)}
+  .status-3 {border-color: color($colors, status3)}
+  .status-4 {border-color: color($colors, status4)}
+  .status-5 {border-color: color($colors, status5)}
+  .status-6 {border-color: color($colors, status6)}
+  .status-7 {border-color: color($colors, status7)}
+}

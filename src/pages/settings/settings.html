@@ -14,23 +14,23 @@
       <button ion-button block default [style.background-color]="connectColor" (click)="connect()">{{ connectTitle }}</button>
     </ion-item>
     <ion-item>
-      <button ion-button block default (click)="setColors()">Status auswählen</button>
+      <button ion-button block default clear (click)="setColors()">Status auswählen</button>
     </ion-item>
     <ion-list-header no-lines>
       User Settings
     </ion-list-header>
-    <ion-grid>
+    <ion-grid *ngIf="user">
       <ion-row>
         <ion-col col-6 offset-3>
           <img id="avatar" src="https://www.gravatar.com/avatar/{{ user.email | gravatarPipe }}?s=250">
         </ion-col>
       </ion-row>
     </ion-grid>
-    <ion-item>
-      <ion-input [(ngModel)]="username" type="text" placeholder="Username"></ion-input>
+    <ion-item *ngIf="user">
+      <ion-input [(ngModel)]="user.username" type="text" placeholder="Username"></ion-input>
     </ion-item>
     <ion-item>
-      <button ion-button block default (click)="changeUsername(username)">Save</button>
+      <button ion-button block default (click)="changeUsername(user.username)">Save</button>
     </ion-item>
     <ion-list-header no-lines>
       Change Password

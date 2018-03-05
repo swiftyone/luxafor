@@ -1,0 +1,13 @@
+TODOS:
+ - push notifications
+     - access token
+ - notification page
+ - google analytics
+ - Bluetooth connection timeout ✓
+ - led über db ändern ✓ funzt im Grunde, aber nur manchmal; doppelte DB Einträge beim manuellen setzen
+ - Farben selektieren in den Einstellungen ✓
+ - automatisches Verbinden ✓
+ - Zeiterfassungsliste gefixt ✓
+
+ - Fragebogen
+ - Wann Testphase?

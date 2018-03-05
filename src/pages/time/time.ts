@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { StorageProvider } from '../../providers/storage/storage';
 
 @Component({
   selector: 'page-time',
@@ -10,10 +11,10 @@ import { FirebaseProvider } from '../../providers/firebase/firebase';
 export class TimePage {
   statusTimes: any;
   activeColor: number;
-  constructor(public navCtrl: NavController, public af: AngularFireDatabase, public fb: FirebaseProvider) {}
+  constructor(public navCtrl: NavController, public af: AngularFireDatabase, public fb: FirebaseProvider, public storage: StorageProvider) {}
 
   ionViewWillEnter() {
-    this.fb.getStorageActiveColor().then(num => {
+    this.storage.getStorageActiveColor().then(num => {
       this.activeColor = num;
     });
   }
@@ -26,9 +27,9 @@ export class TimePage {
       this.statusTimes[this.activeColor] += 1;
     }.bind(this), 1000);
   }
-  
+
   getTimes(): Promise<any> {
-    return this.fb.getStorageUid().then(uid => {
+    return this.storage.getStorageUid().then(uid => {
       let statusTimes = [0, 0, 0, 0, 0, 0, 0, 0];
       let now = new Date();
       let yyyy = now.getFullYear();
