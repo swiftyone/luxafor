@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Firebase } from '@ionic-native/firebase';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { FirebaseProvider } from '../firebase/firebase';
+import { Subscription } from 'rxjs/Subscription';
+import { NotificationsPage } from '../../pages/notifications/notifications';
 
-/*
-  Generated class for the PushProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
 @Injectable()
 export class PushProvider {
+  tokenRefresher: Subscription;
+  constructor(public fbap: Firebase, public http: HttpClient, public fbdb: FirebaseProvider) {}
 
-  constructor(private fbap: Firebase, private http: HttpClient) {}
-
-  getToken() {
-    this.fbap.getToken().then(token => {
-      console.log(token);
+  getToken(uid) {
+    this.tokenRefresher = this.fbap.onTokenRefresh().subscribe(token => {
+      this.fbdb.saveToken(token, uid);
     });
+  }
+
+  whenPush() {
+    return this.fbap.onNotificationOpen();
   }
 
   grantPermission() {
@@ -36,9 +37,13 @@ export class PushProvider {
       .set('uid', uid)
       .set('sender', name)
       .set('message', message)
-    this.http.get('http://localhost:5000/push', {params: tkParams}).subscribe(data => {
+    this.http.get('https://ampel.wiro-consultants.com/push', {params: tkParams}).subscribe(data => {
       console.log(data);
     });
+  }
+
+  unregister() {
+    this.fbap.unregister()    
   }
 
 }

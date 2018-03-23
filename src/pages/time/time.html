@@ -9,10 +9,10 @@
 <ion-content>
   <ion-list>
     <div class="statusTimes" *ngIf="statusTimes">
-      <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7]">
+      <ion-item *ngFor="let status of ['Sonstiges', 'Verfügbar', 'Nur bei Dringlichkeiten', 'Nicht stören', 'Kurz weg (<10 min)', 'Länger weg (>10 min)', 'Mittagspause (~1 Stunde)','Feierabend']; let i = index" [attr.data-index]="i">
         <span class="status-{{i}} status-dot" item-left></span>
-        <span [ngClass]="{'active': activeColor == i, 'inactive': activeColor != i, 'zero': statusTimes[i] == 0}" class="time">{{ statusTimes[i] | minuteSecondPipe }}</span>
-        <span *ngIf="statusTimes[i] > 7200" item-right class="time-alert"><ion-icon name="alert"></ion-icon></span>
+        <span [ngClass]="{'active': activeColor == i, 'inactive': activeColor != i, 'zero': statusTimes[i] == 0}" class="time">{{ statusTimes[i] | minuteSecondPipe }} - {{ status }}</span>
+        <span *ngIf="i == 3 && statusTimes[i] > 7200" item-right class="time-alert"><ion-icon name="alert"></ion-icon></span>
       </ion-item>
     </div>
   </ion-list>

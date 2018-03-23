@@ -21,7 +21,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { LuxaforProvider } from '../providers/luxafor/luxafor';
 import { FirebaseProvider } from '../providers/firebase/firebase';
 import { GravatarPipe } from './pipes/gravatarPipe';
-import { DatumPipe } from './pipes/datumPipe';
 import { MinuteSecondPipe } from './pipes/minuteSecondPipe';
 import { Firebase } from '@ionic-native/firebase';
 import { AnalyticsProvider } from '../providers/analytics/analytics';
@@ -42,7 +41,6 @@ import * as config from './environment/config';
     NotificationsPage,
     GravatarPipe,
     MinuteSecondPipe,
-    DatumPipe,
   ],
   imports: [
     BrowserModule,

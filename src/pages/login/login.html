@@ -8,57 +8,60 @@
               Login
             </ion-item>
             <ion-item>
-              <ion-icon item-start name="mail"></ion-icon><ion-input [(ngModel)]="lEmail" type="email" placeholder="Email"></ion-input>
+              <ion-icon item-start name="mail"></ion-icon><ion-input #lEmail type="email" placeholder="E-Mail"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-icon item-start name="lock"></ion-icon><ion-input [(ngModel)]="lPassword" type="password" placeholder="Password"></ion-input>
+              <ion-icon item-start name="lock"></ion-icon><ion-input #lPassword type="password" placeholder="Passwort"></ion-input>
             </ion-item>
             <ion-item>
-              <button ion-button full default (click)="login(lEmail, lPassword)">Login</button>
+              <button ion-button full default (click)="login(lEmail.value, lPassword.value)">Login</button>
             </ion-item>
             <ion-item>
-              <button ion-button color="dark" full small clear (click)="goForgotPassword()">Forgot Password</button>
+              <button ion-button color="dark" full small clear (click)="goForgotPassword()">Passwort vergessen</button>
             </ion-item>
             <ion-item>
-              <button ion-button color="dark" full small clear (click)="goRegister()">Register</button>
+              <button ion-button color="dark" full small clear (click)="goRegister()">Registrierung</button>
             </ion-item>
           </ion-list>
         </ion-card>
         <ion-card id="register">
           <ion-list>
             <ion-item class="header">
-              Register
+              Registrierung
             </ion-item>
             <ion-item>
-              <ion-icon item-start name="mail"></ion-icon><ion-input [(ngModel)]="rEmail" type="email" placeholder="Email"></ion-input>
+              <ion-icon item-start name="mail"></ion-icon><ion-input #rEmail type="email" placeholder="E-Mail"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-icon item-start name="lock"></ion-icon><ion-input [(ngModel)]="rPassword" type="password" placeholder="Password"></ion-input>
+              <ion-icon item-start name="lock"></ion-icon><ion-input #rPassword type="password" placeholder="Passwort"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-icon item-start name="lock"></ion-icon><ion-input [(ngModel)]="rPasswordRepeat" type="password" placeholder="Repeat Password"></ion-input>
+              <ion-icon item-start name="lock"></ion-icon><ion-input #rPasswordRepeat type="password" placeholder="Passwort wiederholen"></ion-input>
             </ion-item>
             <ion-item>
-              <button ion-button full default (click)="register(rEmail, rPassword, rPasswordRepeat)">Register</button>
+              <button ion-button full default [disabled]="rPassword.value != rPasswordRepeat.value || rPassword.value == 0" (click)="register(rEmail.value, rPassword.value, rPasswordRepeat.value)">Registrieren</button>
             </ion-item>
             <ion-item>
-              <button ion-button color="dark" full small clear (click)="goLogin()">Back</button>
+              <button ion-button color="dark" full small clear (click)="sendEmailVerification()">Validierungsemail schicken</button>
+            </ion-item>
+            <ion-item>
+              <button ion-button color="dark" full small clear (click)="goLogin()">Zurück</button>
             </ion-item>
           </ion-list>
         </ion-card>
         <ion-card id="forgotPassword">
           <ion-list>
             <ion-item class="header">
-              Forgot Password
+              Passwort vergessen
             </ion-item>
             <ion-item>
-              <ion-icon item-start name="mail"></ion-icon><ion-input [(ngModel)]="fEmail" type="email" placeholder="Email"></ion-input>
+              <ion-icon item-start name="mail"></ion-icon><ion-input #fEmail type="email" placeholder="E-Mail"></ion-input>
             </ion-item>
             <ion-item>
-              <button ion-button full default (click)="sendPassword(fEmail)">Reset Password</button>
+              <button ion-button full default (click)="sendPassword(fEmail.value)">Passwort zurücksetzen</button>
             </ion-item>
             <ion-item>
-              <button ion-button color="dark" full small clear (click)="goLogin()">Back</button>
+              <button ion-button color="dark" full small clear (click)="goLogin()">Zurück</button>
             </ion-item>
           </ion-list>
         </ion-card>

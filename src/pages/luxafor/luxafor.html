@@ -5,18 +5,17 @@
     </ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="connect()">
-        <ion-spinner *ngIf="spinner" name="crescent"></ion-spinner>
-        <ion-icon *ngIf="!spinner" [ngStyle]="{'color': connectColor}" name="bluetooth"></ion-icon>
+        <ion-icon [ngStyle]="{'color': connectColor}" name="bluetooth"></ion-icon>
       </button>
       <button ion-button icon-only (click)="goSettings()"><ion-icon name="cog"></ion-icon></button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content scroll>
+<ion-content scroll ng-controller="luxafor">
   <ion-list no-lines>
     <ion-list-header no-lines>
-      <ion-icon name="color-fill"></ion-icon> Farbe
+      Farbe
     </ion-list-header>
     <div id="setColors">
       <ion-grid>
@@ -29,18 +28,18 @@
         </ion-row>
       </ion-grid>
     </div>
-    <ion-list-header>
-      <ion-icon name="sunny"></ion-icon> Helligkeit
+    <ion-list-header no-lines>
+      Helligkeit
     </ion-list-header>
     <ion-item>
-      <ion-range min="0" max="255" step="5" [(ngModel)]="brightness" (ionChange)="changeBrightness()">
+      <ion-range min="0" max="255" step="5" debounce="500" [(ngModel)]="brightness" (ionChange)="changeBrightness()">
         <ion-icon small range-left name="sunny"></ion-icon>
         <ion-icon range-right name="sunny"></ion-icon>
       </ion-range>
     </ion-item>
     <div *ngIf="ganttBool">
-      <ion-list-header>
-        <ion-icon name="time"></ion-icon> Zeitstrahl von heute
+      <ion-list-header no-lines>
+        Zeitstrahl von heute
       </ion-list-header>
       <div class="gantt" *ngIf="gantts">
         <div (click)="showTime(block.time)" class="block block-{{ block.status }}" *ngFor="let block of gantts[0].blocks" [style.width]="block.width"></div>

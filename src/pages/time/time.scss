@@ -11,16 +11,16 @@ page-time {
     }
     .time-alert {
       font-size: 1.3em;
-      color: #AC1616;
+      color: color($colors, status3);
     }
     .zero {
-      color: #ddd !important;
+      color: rgba(236, 240, 241, 0.25) !important;
     }
     .inactive {
-      color: #888;
+      color: rgba(236, 240, 241, 0.65);
     }
     .active {
-      color: #111;
+      color: #fff;
     }
   }
   .status-0 {background-color: color($colors, status0)}

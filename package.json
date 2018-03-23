@@ -1,5 +1,5 @@
 {
-  "name": "luxaforApp",
+  "name": "wiro.sap",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "http://ionicframework.com/",
@@ -30,7 +30,6 @@
     "cordova-android": "6.3.0",
     "cordova-plugin-ble-central": "^1.1.4",
     "cordova-plugin-compat": "^1.2.0",
-    "cordova-plugin-device": "^1.1.7",
     "cordova-plugin-firebase": "^0.1.25",
     "cordova-plugin-ionic-webview": "^1.1.16",
     "cordova-plugin-splashscreen": "^4.1.0",
@@ -55,7 +54,6 @@
       "cordova-plugin-ble-central": {},
       "ionic-plugin-keyboard": {},
       "cordova-plugin-whitelist": {},
-      "cordova-plugin-device": {},
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-firebase": {}

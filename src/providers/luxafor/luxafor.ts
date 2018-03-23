@@ -28,27 +28,33 @@ export class LuxaforProvider {
   }
 
   setColor(index, brightness): Promise<any> {
-    return new Promise((resolve, reject) => {
-      return this.storage.get('deviceid').then(deviceid => {
-        return this.ble.isConnected(deviceid).then(data => {
-          let rgb = this.colors[index];
-          rgb.forEach((elem, index) => {
-            switch (elem) {
-              case true:
-              this.opts[index + 2] = brightness;
-              break;
-              case false:
-              this.opts[index + 2] = 0;
-            }
-          });
-          return this.ble.writeWithoutResponse(deviceid, '1234', '1235', this.opts.buffer).then(()=> {
-            resolve('yep');
-          }).catch(data => {
-            reject(data);
-          });
-        }).catch(data => {
-          reject(data);
+    return this.storage.get('deviceid').then(deviceid => {
+      return this.ble.isConnected(deviceid).then(data => {
+        let rgb = this.colors[index];
+        rgb.forEach((elem, index) => {
+          switch (elem) {
+            case true:
+            this.opts[index + 2] = brightness;
+            break;
+            case false:
+            this.opts[index + 2] = 0;
+          }
         });
+        return this.ble.write(deviceid, '1234', '1235', this.opts.buffer);
+      });
+    });
+  }
+
+  read() {
+    return this.storage.get('deviceid').then(deviceid => {
+      return this.ble.read(deviceid, '1800', '2A00');
+    });
+  }
+
+  notification() {
+    return this.storage.get('deviceid').then(deviceid => {
+      return this.ble.isConnected(deviceid).then(data => {
+        return this.ble.startNotification(deviceid, '1234', '1236');
       });
     });
   }
@@ -66,18 +72,27 @@ export class LuxaforProvider {
     });
   }
 
-  connectLuxafor(name): Promise<any> {
+  connectLuxafor(name: string): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        this.ble.scan([], 5).subscribe(device => {
-          if (device.name == name) {
-            this.ble.connect(device.id).subscribe(data => {
-              console.log('Connected');
-              this.storage.set('deviceid', device.id);
-              resolve(data);
-            });
-          }
+        this.ble.startScanWithOptions(['1234'], {name: name}).subscribe(device => {
+          this.ble.connect(device.id).subscribe(data => {
+            this.storage.set('deviceid', device.id);
+            resolve(data);
+            this.ble.stopScan();
+          }, err => {
+            this.ble.stopScan();            
+            this.showToast('Verbindung nicht möglich oder unterbrochen');
+            reject(err);
+          });
         });
+        setTimeout(() => {
+          this.ble.stopScan();
+          this.isConnected().catch(err => {
+            this.showToast('Gerät nicht gefunden');
+            reject(err);
+          });
+        }, 5000);
       } catch (error) {
         reject(error);
       }

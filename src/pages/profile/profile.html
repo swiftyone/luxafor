@@ -19,7 +19,7 @@
     </ion-item>
   </ion-list>
   <div *ngFor="let gantt of gantts">
-    <div class="datum">{{ gantt.datum | datumPipe }}</div>
+    <div class="datum">{{ gantt.datum | date: 'd. MMM y' }}</div>
     <div class="gantt">
       <div (click)="showTime(block.time)" class="block block-{{ block.status }}" *ngFor="let block of gantt.blocks" [style.width]="block.width"></div>
     </div>

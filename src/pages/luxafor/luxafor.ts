@@ -10,6 +10,9 @@ import { AnalyticsProvider } from '../../providers/analytics/analytics';
 import { PushProvider } from '../../providers/push/push';
 import { StorageProvider } from '../../providers/storage/storage';
 import { User, Gantts } from '../../app/interfaces';
+import { Colors } from '../../app/colors';
+import { Subscription } from 'rxjs/Subscription';
+import { NotificationsPage } from '../notifications/notifications';
 
 @Component({
     selector: 'page-luxafor',
@@ -20,117 +23,101 @@ export class LuxaforPage {
   brightness: number = 128;
   activeColor: number;
   rgb: Array<boolean> = [true, true, true];
-  luxname: string;
-  spinner: boolean = false;
   showColors = new Array();
   gantts: Gantts;
   ganttBool: boolean = false;
-  constructor(public navCtrl: NavController, public storage: StorageProvider, private luxaforProvider: LuxaforProvider, public fb: FirebaseProvider, public af: AngularFireDatabase, public analytics: AnalyticsProvider, public push: PushProvider, public plt: Platform) {
-    this.plt.ready().then(() => {
-      analytics.setScreen('Luxafor');
-    });
-  }
+  interval: number;
+  onOpen: Subscription;
+  dbStatusChange: Subscription;
+  constructor(public navCtrl: NavController, public storage: StorageProvider, 
+    private luxaforProvider: LuxaforProvider, public fb: FirebaseProvider, 
+    public af: AngularFireDatabase, public analytics: AnalyticsProvider, 
+    public push: PushProvider, public plt: Platform) {}
 
   ionViewWillEnter() {
     // get showColors
     this.luxaforProvider.getShowColors().then(data => {
-      if (data != null)
-        this.showColors = data;
+      if (data != null) {
+        if (data.every(elem => {return elem == false})) {
+          this.showColors = [true, true, true, true, true, true, true, true];
+        } else {
+          this.showColors = data;
+        }
+      }
       else
         this.showColors = [true, true, true, true, true, true, true, true];
     });
 
-    // connect
+    // check bluetooth and connection
     this.luxaforProvider.checkBluetooth().then(() => {
       this.luxaforProvider.isConnected().then(() => {
-        this.connectColor = '#32db64';
+        this.resetLight();
+        this.connectColor = Colors.green;
       }).catch(() => {
-        this.luxaforProvider.showToast(this.luxname);
-        this.luxaforProvider.connectLuxafor(this.luxname).then(() => {
-          this.connectColor = '#32db64';
-        }).catch(() => {
-          this.connectColor = '#e2731d';
-        });
+        this.connectColor = Colors.orange;
       });
     }).catch(() => {
-      this.connectColor = '#f53d3d';
+      this.connectColor = Colors.red;
     });
   }
 
   ionViewDidLoad() {
-    //this.push.getToken();
-    // get luxaforname
-    this.luxaforProvider.getLuxname().then((name) => {
-      this.luxname = name;
-    }).catch((err) => {
-      this.luxaforProvider.showToast(err);
-    });
-    
-    // get last active Color
-    this.storage.getStorageActiveColor().then(num => {
-      this.activeColor = num;
-    });
+    // set Screen for Analytics
+    this.analytics.setScreen('Luxafor');
 
     this.updateGantt();
 
-    // observer db status
-    // this.fb.getStorageUid().then(uid => {
-    //   if (uid != null) {
-    //     this.af.object(`users/${uid}`).valueChanges().subscribe((data:User) => {
-    //       let status = (data as any).status;
-    //       this.fb.updateStatus(status).then(() => {
-    //         this.fb.setStorageActiveColor(status).then(()=> {
-    //           this.activeColor = status;
-    //         });
-    //       }).catch(() => {
-    //         this.activeColor = null;
-    //       });
-    //       this.luxaforProvider.setColor(status, this.brightness).catch(() => {});
-    //     });
-    //   }
-    // });
+    // change status via DB
+    this.storage.getStorageUid().then(uid => {
+      this.dbStatusChange = this.af.object(`users/${uid}/status`).valueChanges().subscribe((status: number) => {
+        this.activeColor = status;
+        this.storage.setStorageActiveColor(status);
+        this.luxaforProvider.setColor(status, this.brightness).catch(() => {});
+      });
+    });
 
-    setInterval(() => {
-      if (this.activeColor && this.brightness)
-        this.luxaforProvider.setColor(this.activeColor, this.brightness).catch(()=>{});
-    }, 30000);
+    this.onOpen = this.push.whenPush().subscribe(data => {
+      this.navCtrl.parent.select(3);
+    });
+
   }
 
   // check bluetooth, check connection
   connect() {
     this.luxaforProvider.checkBluetooth().then(() => {
-      this.luxaforProvider.isConnected().then(() => {
-        this.connectColor = '#32db64';
-      }).catch(() => {
-        this.spinner = true;
-        this.luxaforProvider.connectLuxafor(this.luxname).then(() => {
-          this.connectColor = '#32db64';
-          this.spinner = false;
+      this.luxaforProvider.getLuxname().then(name => {
+        this.luxaforProvider.isConnected().then(() => {
+          this.resetLight();
+          this.connectColor = Colors.green;
         }).catch(() => {
-          this.connectColor = '#e2731d';
-          this.spinner = false;
+          this.connectColor = Colors.blue;
+          this.luxaforProvider.connectLuxafor(name).then(() => {
+            this.connectColor = Colors.green;
+          }).catch(() => {
+            this.connectColor = Colors.orange;
+          });
         });
+      }).catch(err => {
+        this.luxaforProvider.showToast('Bitte über Einstellungen verbinden.');
       });
     }).catch(() => {
-      this.connectColor = '#f53d3d';
+      this.connectColor = Colors.red;
     });
   }
 
   setColor(index) {
     if (index != this.activeColor) {
       this.fb.updateStatus(index).then(() => {
-        this.analytics.logEvent('color_set', {'color': index});
+        this.analytics.logEvent('color_set', String(index));
+        // this.activeColor = index;
         if (!this.ganttBool)
           this.updateGantt();
-        this.storage.setStorageActiveColor(index).then(()=> {
-          this.activeColor = index;
-        });
       }).catch((data) => {
         this.activeColor = null;
         this.luxaforProvider.showToast('Bitte neu anmelden.');
       });
     }
-    this.luxaforProvider.setColor(index, this.brightness).catch(()=>{});
+    // this.luxaforProvider.setColor(index, this.brightness).catch(()=>{});
   }
 
   changeBrightness() {
@@ -142,21 +129,38 @@ export class LuxaforPage {
   }
 
   goSettings() {
-    this.navCtrl.push(SettingsPage);
+    this.navCtrl.push(SettingsPage, {
+      interval: this.interval,
+      dbStatusChange: this.dbStatusChange,
+      onOpen: this.onOpen
+    });
   }
 
   updateGantt() {
     this.storage.getStorageUid().then(uid => {
-      let now = new Date();
-      let yyyy = now.getFullYear();
-      let mm = now.getMonth();
-      let dd = now.getDate();
-      this.fb.getGantt(uid, `${yyyy}-${mm}-${dd}`).subscribe((data:Gantts) => {
+      let today = +new Date().setHours(0,0,0,0);
+      this.fb.getGantt(uid, today).subscribe((data:Gantts) => {
         this.gantts = data;
-        this.ganttBool = true;
+        if (data[0])
+          this.ganttBool = true;
       }, data => {
         this.ganttBool = false;
       });
     });
   }
+
+  resetLight() {
+    if (this.interval == undefined) {
+      this.interval = setInterval(() => {
+        if (this.activeColor && this.brightness) {
+          this.luxaforProvider.setColor(this.activeColor, this.brightness).then(data => {
+            console.log(data);
+          }).catch(data => {
+            console.log(data);
+          });
+        }
+      }, 5000);
+    }
+  }
+
 }

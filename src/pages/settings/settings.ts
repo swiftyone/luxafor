@@ -7,6 +7,9 @@ import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { StorageProvider } from '../../providers/storage/storage';
 import { User } from '../../app/interfaces';
 import md5 from 'crypto-md5';
+import { PushProvider } from '../../providers/push/push';
+import { AnalyticsProvider } from '../../providers/analytics/analytics';
+import { Colors } from '../../app/colors';
 
 @Component({
   selector: 'page-settings',
@@ -15,15 +18,18 @@ import md5 from 'crypto-md5';
 export class SettingsPage {
   user: User;
   username: string = '';
-  connectColor: string = '#488aff';
+  connectColor: string = Colors.blue;
   connectTitle: string = 'Verbinden';
   luxname: string;
   constructor(public navCtrl: NavController, public storage: StorageProvider, 
     private alertCtrl: AlertController, public navParams: NavParams, 
     public angularFireAuth: AngularFireAuth, public luxafor: LuxaforProvider, 
-    public fb: FirebaseProvider) {}
+    public fb: FirebaseProvider, public push: PushProvider,
+    public analytics: AnalyticsProvider) {}
 
   ionViewDidLoad() {
+    this.analytics.setScreen('Settings');
+
     this.storage.getStorageUid().then(uid => {
       this.fb.getUserByUid(uid).then((data:User) => {
         this.user = data;
@@ -37,43 +43,44 @@ export class SettingsPage {
     });
 
     this.luxafor.isConnected().then(() => {
-      this.connectTitle = 'Disconnect';
-      this.connectColor = '#32db64';
+      this.connectTitle = 'Verbindung trennen';
+      this.connectColor = Colors.green;
     }).catch(() => {
       this.connectTitle = 'Verbinden';
-      this.connectColor = '#488aff';
+      this.connectColor = Colors.blue;
     });
   }
 
   connect() {
     this.luxafor.checkBluetooth().then(() => {
-      this.connectColor = '#488aff';
-    }).catch(() => {
-      this.connectColor = '#f53d3d';
-      return null;
-    });
-
-    this.luxafor.isConnected().then(() => {
-      this.luxafor.disconnectLuxafor().then(() => {
-        this.connectTitle = 'Connect';
-        this.connectColor = '#488aff';
+      this.connectColor = Colors.blue;
+      this.connectTitle = 'Verbinden...';
+      this.luxafor.isConnected().then(() => {
+        this.luxafor.disconnectLuxafor().then(() => {
+          this.connectTitle = 'Verbinden';
+          this.connectColor = Colors.blue;
+        }).catch(() => {
+          this.connectTitle = 'Verbindung trennen';
+          this.connectColor = Colors.green;
+        });
       }).catch(() => {
-        this.connectTitle = 'Disconnect';
-        this.connectColor = '#32db64';
+        this.luxafor.getLuxname().then(name => {
+          if (name != this.luxname)
+            this.luxafor.setLuxname(this.luxname);
+          this.luxafor.connectLuxafor(this.luxname).then(data => {
+            this.connectTitle = 'Verbindung trennen';
+            this.connectColor = Colors.green;
+          }).catch(() => {
+            this.connectTitle = 'Verbinden';
+            this.connectColor = Colors.orange;
+          });
+        });
       });
     }).catch(() => {
-      this.luxafor.getLuxname().then(name => {
-        if (name != this.luxname)
-          this.luxafor.setLuxname(this.luxname);
-        this.luxafor.connectLuxafor(this.luxname).then(() => {
-          this.connectTitle = 'Disconnect';
-          this.connectColor = '#32db64';
-        }).catch(() => {
-          this.connectTitle = 'Connect';
-          this.connectColor = '#f53d3d';
-        });
-      })
+      this.connectTitle = 'Bluetooth deaktiviert';
+      this.connectColor = Colors.red;
     });
+
   }
 
   setColors() {
@@ -109,26 +116,42 @@ export class SettingsPage {
 
   changeUsername(username) {
     this.fb.changeUsername(username).then(() => {
-      this.luxafor.showToast('Username changed to ' + username);
+      this.luxafor.showToast('Name geändert zu ' + username);
     }).catch(() => {
-      this.luxafor.showToast('An error occured');
+      this.luxafor.showToast('Da ging was schief...');
     });
   }
 
-  changePassword(pass, passRepeat) {
-    if (pass == passRepeat) {
-      this.angularFireAuth.auth.currentUser.updatePassword(pass).then(() => {
-        this.luxafor.showToast("Password changed");
-      }).catch(data => {
-        this.luxafor.showToast(data);
+  changePassword(passOld, passNew, passRepeat) {
+    if (passNew == passRepeat) {
+      this.angularFireAuth.auth.signInWithEmailAndPassword(this.angularFireAuth.auth.currentUser.email, passOld).then(() => {
+        this.angularFireAuth.auth.currentUser.updatePassword(passNew).then(() => {
+          this.luxafor.showToast("Passwort geändert");
+        }).catch(data => {
+          this.luxafor.showToast(data);
+        });
+      }).catch(() => {
+        this.luxafor.showToast('Altes Passwort ist falsch');
       });
     } else {
-      this.luxafor.showToast("Passwords didn't match.");
+      this.luxafor.showToast("Passwörter stimmen nicht über ein");
     }
   }
 
   logout() {
     this.angularFireAuth.auth.signOut().then(() => {
+      clearInterval(this.navParams.get('interval'));
+      let onOpen = this.navParams.get('onOpen');
+      let dbStatusChange = this.navParams.get('dbStatusChange');
+      if (onOpen != undefined)
+        onOpen.unsubscribe();
+      if (dbStatusChange != undefined)
+        dbStatusChange.unsubscribe();
+      if (this.fb.subscription != undefined)
+        this.fb.subscription.unsubscribe();
+      if (this.push.tokenRefresher != undefined)
+        this.push.tokenRefresher.unsubscribe();
+      this.push.unregister();
       this.navCtrl.parent.parent.setRoot(LoginPage);
     })
   }

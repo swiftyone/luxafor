@@ -14,3 +14,47 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+ion-content {
+    background-image: url('../assets/imgs/background.svg');
+    background-size: cover;
+    background-position: center;
+}
+.scroll-content {
+    margin-bottom: 0px !important;
+    padding-bottom: 56px;
+    margin-top: 0px !important;
+    padding-top: 56px;
+}
+ion-item, ion-list, .item {
+    background: transparent;
+    color: #eee;
+}
+.item.activated {
+    background-color: rgba(236, 240, 241, 0.204);
+}
+ion-list-header {
+    color: #eee;
+}
+.list-header, .list .item-block .item-inner {
+    border-color: #7f8c8d;
+}
+ion-card ion-label h2 {
+    color: #222;
+}
+.bar-button {
+    color: #ddd;
+}
+.toolbar-background {
+    background-color: rgba(44, 62, 80, 0.9);
+    color: #ddd;
+}
+.toolbar-title {
+    color: #eee;
+}
+p {
+    color: #7f8c8d;
+}
+.tabs .tabbar {
+    background-color: rgba(236, 240, 241, 0.9);
+}

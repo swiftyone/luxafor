@@ -6,6 +6,7 @@ import { ProfilePage } from '../profile/profile';
 import { PushProvider } from '../../providers/push/push';
 import { User } from '../../app/interfaces';
 import { StorageProvider } from '../../providers/storage/storage';
+import { AnalyticsProvider } from '../../providers/analytics/analytics';
 
 @Component({
   selector: 'page-team',
@@ -17,9 +18,11 @@ export class TeamPage {
   constructor(public navCtrl: NavController, public fb: FirebaseProvider, 
     public actionSheetCtrl: ActionSheetController, public alertCtrl: AlertController, 
     public push: PushProvider, public storage: StorageProvider,
-    public toastCtrl: ToastController) {
-    // this.users = fb.getAllUsers('status').valueChanges();
-    this.users = fb.getAllUsers('status').snapshotChanges().map(actions => {
+    public toastCtrl: ToastController, public analytics: AnalyticsProvider) {}
+  
+  ionViewDidLoad() {
+    this.analytics.setScreen('Team');
+    this.users = this.fb.getAllUsers('status').snapshotChanges().map(actions => {
       return actions.map(action => {
         const $key = action.payload.key;
         const data = { $key, ...action.payload.val() };
@@ -83,9 +86,14 @@ export class TeamPage {
             text: 'Anstupsen',
             handler: data => {
               this.storage.getStorageUid().then(uid => {
+                console.log(uid);
                 this.fb.getUserByUid(uid).then(sender => {
+                  console.log('data 1');
                   this.fb.newPoke(uid, user.$key, data.message);
                   this.push.push(user.$key, (sender as any).username, data.message);
+                  this.analytics.logEvent('poke_user', user.$key);
+                }).catch(data => {
+                  console.log('data 2');
                 });
               });
             }

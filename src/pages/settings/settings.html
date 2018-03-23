@@ -8,7 +8,7 @@
   <ion-list no-lines>
     <ion-list-header no-lines>Luxafor Settings</ion-list-header>
     <ion-item>
-      <ion-input [(ngModel)]="luxname" placeholder="Luxafor-Device-Name"></ion-input>
+      <ion-input [(ngModel)]="luxname" placeholder="Luxafor Device Name"></ion-input>
     </ion-item>
     <ion-item>
       <button ion-button block default [style.background-color]="connectColor" (click)="connect()">{{ connectTitle }}</button>
@@ -30,22 +30,25 @@
       <ion-input [(ngModel)]="user.username" type="text" placeholder="Username"></ion-input>
     </ion-item>
     <ion-item>
-      <button ion-button block default (click)="changeUsername(user.username)">Save</button>
+      <button ion-button block default (click)="changeUsername(user.username)">Name ändern</button>
     </ion-item>
     <ion-list-header no-lines>
       Change Password
     </ion-list-header>
     <ion-item>
-      <ion-input [(ngModel)]="password" type="password" placeholder="Password"></ion-input>
+      <ion-input #passwordOld type="password" placeholder="Aktuelles Passwort"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-input [(ngModel)]="passwordRepeat" type="password" placeholder="Repeat Password"></ion-input>
+      <ion-input #passwordNew type="password" placeholder="Neues Passwort"></ion-input>
     </ion-item>
     <ion-item>
-      <button ion-button block default (click)="changePassword(password, passwordRepeat)">Change Password</button>
+      <ion-input #passwordRepeat type="password" placeholder="Passwort wiederholen"></ion-input>
     </ion-item>
     <ion-item>
-      <button ion-button color="danger" outline block default (click)="logout()">Logout</button>
+      <button ion-button block default [disabled]="passwordNew.value != passwordRepeat.value || passwordNew.value.length == 0 || passwordOld.value.length == 0" (click)="changePassword(passwordOld.value, passwordNew.value, passwordRepeat.value)">Change Password</button>
+    </ion-item>
+    <ion-item>
+      <button ion-button color="status3" outline block default (click)="logout()">Logout</button>
     </ion-item>
   </ion-list>
 </ion-content>

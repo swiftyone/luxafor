@@ -1,13 +1,12 @@
 TODOS:
- - push notifications
-     - access token
- - notification page
+ - push notifications ✓
+     - access token ✓
+ - notification page ✓
  - google analytics
- - Bluetooth connection timeout ✓
- - led über db ändern ✓ funzt im Grunde, aber nur manchmal; doppelte DB Einträge beim manuellen setzen
+ - Bluetooth connection timeout noch nicht ganz klar
+ - led über db ändern ✓ bei bedarf einrichten
  - Farben selektieren in den Einstellungen ✓
  - automatisches Verbinden ✓
  - Zeiterfassungsliste gefixt ✓
 
- - Fragebogen
  - Wann Testphase?

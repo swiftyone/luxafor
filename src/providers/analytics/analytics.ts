@@ -12,9 +12,14 @@ export class AnalyticsProvider {
 
   constructor(private fbap: Firebase) {}
 
+  setUser(uid) {
+    this.fbap.setUserId(uid);
+    this.fbap.setUserProperty('user_id', uid);
+  }  
+
   setScreen(name: string) {
     this.fbap.setScreenName(name).then((res) => {
-      console.log('test 1');
+      console.log(res);
     }).catch((error) => {
       console.error(error);
     });

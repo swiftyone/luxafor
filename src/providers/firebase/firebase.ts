@@ -3,16 +3,22 @@ import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { User, Gantts } from '../../app/interfaces';
+import { User, Gantts, Poke } from '../../app/interfaces';
 import { StorageProvider } from '../storage/storage';
+import { Subscription } from 'rxjs/Subscription';
 
 @Injectable()
 export class FirebaseProvider {
 
+  subscription: Subscription;
   constructor(public af: AngularFireDatabase, public angularFireAuth: AngularFireAuth, public storage: StorageProvider) {}
 
   addUserByEmail(email, uid) {
-    this.af.list(`users/${uid}`).set('email', email);
+    this.af.object(`users/${uid}`).set({
+      'email': email,
+      'username': email.split('@')[0],
+      'status': 0
+    });
   }
 
   userExists(uid) {
@@ -21,12 +27,8 @@ export class FirebaseProvider {
         .ref('users')
         .once('value')
         .then(data => {
-          if (data.hasChild(uid)) {
-            resolve();
-          } else {
-            reject();
-          };
-        })
+          resolve(data.hasChild(uid));
+        });
     });
   }
 
@@ -50,8 +52,9 @@ export class FirebaseProvider {
     // }).toPromise();
     // return this.af.object(`users/${uid}`).valueChanges().map((data:User) => data).toPromise();
     return new Promise(resolve => {
-      this.af.object(`users/${uid}`).valueChanges().subscribe(data => {
+      let user = this.af.object(`users/${uid}`).valueChanges().subscribe(data => {
         resolve(data);
+        user.unsubscribe();
       });
     });
   }
@@ -68,26 +71,26 @@ export class FirebaseProvider {
   }
 
   updateStatus(status): Promise<any> {
-    return new Promise((resolve, reject) => {
-      let date = new Date();
-      let day = date.getDate();
-      let month = date.getMonth();
-      let year = date.getFullYear();
-      let timestamp = + date;
-      return this.storage.getStorageUid().then(uid => {
-        if (uid != null) {
-          this.af.object(`users/${uid}`).update({'status': status});
-          this.af.object(`status/${uid}/${year}-${month}-${day}`).update({[timestamp]: status});
-          resolve();
-        } else {
-          reject(Error('Uid not found.'));
-        }
-      });
+    let timestamp = +new Date();
+    let day = +new Date().setHours(0,0,0,0);
+    return this.storage.getStorageUid().then(uid => {
+      if (uid != null) {
+        this.af.object(`users/${uid}`).update({'status': status});
+        return this.af.object(`status/${uid}/${day}`).update({[timestamp]: status});
+      }
     });
   }
 
-  getPokes(uid: string) {
-    return this.af.list(`messages/${uid}`);
+  saveToken(token: string, uid: string) {
+    this.af.object(`devices`).update({[uid]: token});
+  }
+
+  getPokes(uid: string): Observable<any> {
+    return this.af.list(`messages/${uid}`).snapshotChanges().map(actions => {
+      return actions.map(action => {
+        return { pid: action.payload.key, ...action.payload.val() };
+      });
+    })
   }
 
   newPoke(senderUid: string, receipentUid: string, message: string) {
@@ -103,28 +106,28 @@ export class FirebaseProvider {
     this.af.object(`messages/${uid}/${pid}`).remove();
   }
 
-  getGantt(userkey: string, date?: string): Observable<Gantts> {
+  getGantt(userkey: string, date?: number): Observable<Gantts> {
     return this.af.object(`status/${userkey}/${date != undefined ? date : ''}`).valueChanges().map(data => {
       if (date)
         data = {[date]: data};
       let gantts = [];
       try {
         for (let key of Object.keys(data).reverse()) {
-          let datum = key.split('-');
-          let prev = Number(new Date(Number(datum[0]), Number(datum[1]), Number(datum[2]), 8, 0, 0));
-          let last = Number(new Date(Number(datum[0]), Number(datum[1]), Number(datum[2]), 20, 0, 0));
+          let datum = new Date(+key);
+          let prev = +datum.setHours(8, 0, 0, 0);
+          let last = +datum.setHours(20, 0, 0, 0);
           let blocks = [];
-          Object.keys(data[key]).forEach((time, index) => {
-            if (Number(time) >= Number(prev) && Number(time) <= Number(last)) {
-              blocks.push(this.calculateBlock(data, key, time, prev, index));
-              prev = Number(time);
-            }
+          Object.keys(data[key]).filter(key => Number(key) >= Number(prev) && Number(key) <= Number(last)).forEach((time, index) => {
+            blocks.push(this.calculateBlock(data, Number(key), Number(time), prev, index));
+            prev = Number(time);
           });
-          blocks.push(this.calculateBlock(data, key, last, prev));
-          gantts.push({
-            blocks: blocks,
-            datum: key
-          });
+          if (last - 43200000 != prev) {
+            blocks.push(this.calculateBlock(data, Number(key), last, prev));
+            gantts.push({
+              blocks: blocks,
+              datum: key
+            });
+          }
         }
         return gantts;
       } catch (err) {
@@ -133,9 +136,9 @@ export class FirebaseProvider {
     });
   }
 
-  calculateBlock(data, key, time, prev, index?) {
-    let width = (Number(time) - prev) / 43200000;
-    let showTime = new Date(Number(prev))
+  calculateBlock(data, key: number, time: number, prev: number, index?: number) {
+    let width = (time - prev) / 43200000;
+    let showTime = new Date(prev);
     let minute = String(showTime.getMinutes());
     let minuteStr = minute.length == 1 ? 0 + minute : minute;
     return {

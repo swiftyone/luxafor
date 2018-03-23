@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { ToastController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { StorageProvider } from '../../providers/storage/storage';
+import { PushProvider } from '../../providers/push/push';
+import { AnalyticsProvider } from '../../providers/analytics/analytics';
 
 @Component({
   selector: 'page-login',
@@ -12,25 +14,27 @@ import { StorageProvider } from '../../providers/storage/storage';
 })
 export class LoginPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public angularFireAuth: AngularFireAuth, private toastCtrl: ToastController, public fb: FirebaseProvider, public storage: StorageProvider) {
-    this.angularFireAuth.authState.subscribe(user => {
-      if (user) {
-        navCtrl.setRoot(TabsPage);
-      }
-    })
-  }
+  constructor(public navCtrl: NavController, public navParams: NavParams, 
+    public angularFireAuth: AngularFireAuth, private toastCtrl: ToastController, 
+    public fb: FirebaseProvider, public storage: StorageProvider,
+    public push: PushProvider, public analytics: AnalyticsProvider,
+    public load: LoadingController) {}
 
   login(username, password) {
     this.angularFireAuth.auth.signInWithEmailAndPassword(username, password).then((user) => {
       if (user.emailVerified) {
-        this.fb.userExists(user.uid).catch(() => {
-          this.fb.addUserByEmail(user.email, user.uid);
+        this.fb.userExists(user.uid).then(exists => {
+          if (!exists)
+            this.fb.addUserByEmail(user.email, user.uid);
         }).then(()=>{
+          this.analytics.setUser(user.uid);
+          this.push.grantPermission();
+          this.push.getToken(user.uid);
           this.storage.setStorageUid(user.uid);
           this.navCtrl.setRoot(TabsPage);
         });
       } else {
-        this.showToast('Email is not verified');
+        this.showToast('E-Mail ist nicht verifiziert');
       }
     }).catch(err => {
       this.showToast(err);
@@ -39,7 +43,6 @@ export class LoginPage {
 
   register(email, password, passwordRepeat) {
     this.angularFireAuth.auth.createUserWithEmailAndPassword(email, password).then((res) => {
-      this.showToast('register');
       this.sendEmailVerification();
     }).catch((err)=> {
       this.showToast(err);
@@ -48,15 +51,25 @@ export class LoginPage {
 
   sendPassword(email) {
     this.angularFireAuth.auth.sendPasswordResetEmail(email).then(() => {
-      this.showToast('Email sent.');
+      this.showToast('E-Mail verschickt');
+    }).catch(err => {
+      this.showToast('E-Mail nicht gefunden');
     })
   }
 
   sendEmailVerification() {
-    this.angularFireAuth.authState.subscribe(user => {
-      user.sendEmailVerification().then(() => {
-        this.showToast('Verification email sent.');
-      })
+    let userObservable = this.angularFireAuth.authState.subscribe(user => {
+      try {
+        user.sendEmailVerification().then(() => {
+          this.showToast('Validierungs-E-Mail verschickt');
+        });
+      } catch(err) {
+        this.showToast('Zunäscht registrieren');
+      }
+      userObservable.unsubscribe();
+    }, err => {
+      this.showToast(err);
+      userObservable.unsubscribe();
     });
   }
 
@@ -87,7 +100,7 @@ export class LoginPage {
     this.toastCtrl.create({
       message: message,
       duration: 3000,
-      position: 'top'
+      position: 'bottom'
     }).present();
   }
 }

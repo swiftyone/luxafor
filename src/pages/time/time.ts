@@ -3,6 +3,7 @@ import { NavController } from 'ionic-angular';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { StorageProvider } from '../../providers/storage/storage';
+import { AnalyticsProvider } from '../../providers/analytics/analytics';
 
 @Component({
   selector: 'page-time',
@@ -11,7 +12,9 @@ import { StorageProvider } from '../../providers/storage/storage';
 export class TimePage {
   statusTimes: any;
   activeColor: number;
-  constructor(public navCtrl: NavController, public af: AngularFireDatabase, public fb: FirebaseProvider, public storage: StorageProvider) {}
+  constructor(public navCtrl: NavController, public af: AngularFireDatabase, 
+    public fb: FirebaseProvider, public storage: StorageProvider,
+    public analytics: AnalyticsProvider) {}
 
   ionViewWillEnter() {
     this.storage.getStorageActiveColor().then(num => {
@@ -19,7 +22,12 @@ export class TimePage {
     });
   }
 
+  test() {
+    console.log('test');
+  }
+
   ionViewDidLoad() {
+    this.analytics.setScreen('Zeiten');
     this.getTimes().then(data => {
       this.statusTimes = data;
     });
@@ -31,21 +39,20 @@ export class TimePage {
   getTimes(): Promise<any> {
     return this.storage.getStorageUid().then(uid => {
       let statusTimes = [0, 0, 0, 0, 0, 0, 0, 0];
-      let now = new Date();
-      let yyyy = now.getFullYear();
-      let mm = now.getMonth();
-      let dd = now.getDate();
+      let now = +new Date();
+      let today = +new Date().setHours(0,0,0,0);
+      let eight = +new Date().setHours(8,0,0,0);
       return new Promise(resolve => {
-        let observer = this.af.object(`status/${uid}/${yyyy}-${mm}-${dd}`).valueChanges().subscribe(data => {
+        let observer = this.af.object(`status/${uid}/${today}`).valueChanges().subscribe(data => {
           try {
-            let times = Object.keys(data);
+            let times = Object.keys(data).filter(time => +time > eight);
             let prev = times.shift();
             for (let time of times) {
               let diff = Number(time) - Number(prev);
               statusTimes[data[prev]] += Math.round(diff / 1000);
               prev = time;
             }
-            let diff = Number(now) - Number(prev);
+            let diff = now - Number(prev);
             statusTimes[data[prev]] += Math.round(diff / 1000);
             resolve(statusTimes);
           } catch (err) {

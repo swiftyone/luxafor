@@ -1,13 +1,13 @@
 page-login {
+  .scroll-content {
+    padding-bottom: 0px;
+    padding-top: 0px;
+  }
   .header {
-    background-color: #488aff !important;
+    background-color: color($colors, primary) !important;
     text-align: center;
     color: #fff !important;
     font-weight: bold;
-  }
-  ion-content {
-    background-image: url('../../assets/imgs/login.jpg');
-    background-size: cover;
   }
   ion-card {
     margin-top: 0px !important;
@@ -31,12 +31,12 @@ page-login {
   }
   .item-inner {
     margin-left: 0px !important;
-  }
-  ion-item {
-    background: transparent !important;
+    input {
+      color: #222;
+    }
   }
   ion-icon {
-    color: #555;
+    color: #7f8c8d;
     font-size: 2.5rem !important;
   }
 }
