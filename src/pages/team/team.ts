@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, ActionSheetController, AlertController, ToastController, Toast } from 'ionic-angular';
+import { NavController, ActionSheetController, AlertController, ToastController } from 'ionic-angular';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { Observable } from 'rxjs/Observable';
 import { ProfilePage } from '../profile/profile';
 import { PushProvider } from '../../providers/push/push';
-import { User } from '../../app/interfaces';
 import { StorageProvider } from '../../providers/storage/storage';
 import { AnalyticsProvider } from '../../providers/analytics/analytics';
 
@@ -86,14 +85,14 @@ export class TeamPage {
             text: 'Anstupsen',
             handler: data => {
               this.storage.getStorageUid().then(uid => {
-                console.log(uid);
+                // console.log(uid);
                 this.fb.getUserByUid(uid).then(sender => {
-                  console.log('data 1');
+                  // console.log('data 1');
                   this.fb.newPoke(uid, user.$key, data.message);
                   this.push.push(user.$key, (sender as any).username, data.message);
                   this.analytics.logEvent('poke_user', user.$key);
                 }).catch(data => {
-                  console.log('data 2');
+                  // console.log('data 2');
                 });
               });
             }

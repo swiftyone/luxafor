@@ -1,9 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { User, Gantts, Poke } from '../../app/interfaces';
+import { Gantts } from '../../app/interfaces';
 import { StorageProvider } from '../storage/storage';
 import { Subscription } from 'rxjs/Subscription';
 

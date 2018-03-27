@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ToastController, Platform } from 'ionic-angular';
-import { BLE } from '@ionic-native/ble';
-import { Firebase } from '@ionic-native/firebase';
+import { NavController, Platform } from 'ionic-angular';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { SettingsPage } from '../settings/settings';
 import { LuxaforProvider } from '../../providers/luxafor/luxafor';
@@ -9,10 +7,9 @@ import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { AnalyticsProvider } from '../../providers/analytics/analytics';
 import { PushProvider } from '../../providers/push/push';
 import { StorageProvider } from '../../providers/storage/storage';
-import { User, Gantts } from '../../app/interfaces';
+import { Gantts } from '../../app/interfaces';
 import { Colors } from '../../app/colors';
 import { Subscription } from 'rxjs/Subscription';
-import { NotificationsPage } from '../notifications/notifications';
 
 @Component({
     selector: 'page-luxafor',
@@ -92,6 +89,7 @@ export class LuxaforPage {
         }).catch(() => {
           this.connectColor = Colors.blue;
           this.luxaforProvider.connectLuxafor(name).then(() => {
+            this.resetLight();
             this.connectColor = Colors.green;
           }).catch(() => {
             this.connectColor = Colors.orange;

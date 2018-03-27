@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { LoginPage } from '../login/login';
 import { LuxaforProvider } from '../../providers/luxafor/luxafor';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { StorageProvider } from '../../providers/storage/storage';
 import { User } from '../../app/interfaces';
-import md5 from 'crypto-md5';
 import { PushProvider } from '../../providers/push/push';
 import { AnalyticsProvider } from '../../providers/analytics/analytics';
 import { Colors } from '../../app/colors';

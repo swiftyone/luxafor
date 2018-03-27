@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
+import { NavController, NavParams, LoadingController } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { ToastController } from 'ionic-angular';
@@ -18,7 +18,9 @@ export class LoginPage {
     public angularFireAuth: AngularFireAuth, private toastCtrl: ToastController, 
     public fb: FirebaseProvider, public storage: StorageProvider,
     public push: PushProvider, public analytics: AnalyticsProvider,
-    public load: LoadingController) {}
+    public load: LoadingController) {
+    this.analytics.setScreen('Login');
+  }
 
   login(username, password) {
     this.angularFireAuth.auth.signInWithEmailAndPassword(username, password).then((user) => {

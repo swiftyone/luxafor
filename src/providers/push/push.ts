@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Firebase } from '@ionic-native/firebase';
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { FirebaseProvider } from '../firebase/firebase';
 import { Subscription } from 'rxjs/Subscription';
-import { NotificationsPage } from '../../pages/notifications/notifications';
 
 @Injectable()
 export class PushProvider {
@@ -37,6 +36,7 @@ export class PushProvider {
       .set('uid', uid)
       .set('sender', name)
       .set('message', message)
+      .set('apikey', '4407dd65f540efa472d5b612275f66650ea38d52');
     this.http.get('https://ampel.wiro-consultants.com/push', {params: tkParams}).subscribe(data => {
       console.log(data);
     });

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { LuxaforProvider } from '../../providers/luxafor/luxafor';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
-import { User, Gantts } from '../../app/interfaces';
+import { Gantts } from '../../app/interfaces';
 import { AnalyticsProvider } from '../../providers/analytics/analytics';
 
 @Component({
