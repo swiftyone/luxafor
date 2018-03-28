@@ -29,6 +29,7 @@
     "angularfire2": "^5.0.0-rc.4",
     "cordova-android": "6.3.0",
     "cordova-google-api-version": "0.0.1",
+    "cordova-ios": "4.5.4",
     "cordova-plugin-ble-central": "^1.1.4",
     "cordova-plugin-compat": "^1.2.0",
     "cordova-plugin-firebase": "^0.1.25",
@@ -52,7 +53,9 @@
   "description": "Your app for staying focused",
   "cordova": {
     "plugins": {
-      "cordova-plugin-ble-central": {},
+      "cordova-plugin-ble-central": {
+        "BLUETOOTH_USAGE_DESCRIPTION": " "
+      },
       "ionic-plugin-keyboard": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-splashscreen": {},
@@ -63,7 +66,8 @@
       }
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }
