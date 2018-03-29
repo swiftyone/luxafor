@@ -3,6 +3,7 @@ import { Firebase } from '@ionic-native/firebase';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { FirebaseProvider } from '../firebase/firebase';
 import { Subscription } from 'rxjs/Subscription';
+import { config } from '../../app/environment/config';
 
 @Injectable()
 export class PushProvider {
@@ -36,14 +37,14 @@ export class PushProvider {
       .set('uid', uid)
       .set('sender', name)
       .set('message', message)
-      .set('apikey', '4407dd65f540efa472d5b612275f66650ea38d52');
+      .set('apikey', config.php.serverKey);
     this.http.get('https://ampel.wiro-consultants.com/push', {params: tkParams}).subscribe(data => {
       console.log(data);
     });
   }
 
   unregister() {
-    this.fbap.unregister()    
+    this.fbap.unregister()
   }
 
 }

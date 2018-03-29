@@ -26,7 +26,7 @@ import { Firebase } from '@ionic-native/firebase';
 import { AnalyticsProvider } from '../providers/analytics/analytics';
 import { PushProvider } from '../providers/push/push';
 import { StorageProvider } from '../providers/storage/storage';
-import * as config from './environment/config';
+import { config } from './environment/config';
 
 @NgModule({
   declarations: [
@@ -48,7 +48,7 @@ import * as config from './environment/config';
       tabsHideOnSubPages: true,
     }),
     IonicStorageModule.forRoot(),
-    AngularFireModule.initializeApp(config.config.firebase),
+    AngularFireModule.initializeApp(config.firebase),
     AngularFireAuthModule,
     AngularFireDatabaseModule,
     HttpClientModule

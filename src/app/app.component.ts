@@ -21,7 +21,7 @@ export class MyApp {
 
       window.setTimeout(() => {
         splashScreen.hide();
-      }, 1000);
+      }, 3000);
     });
   }
 

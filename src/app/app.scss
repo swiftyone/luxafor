@@ -38,6 +38,9 @@ ion-item, ion-list, .item {
 ion-list-header {
     color: #eee;
 }
+.list-ios > .item-block:first-child {
+  border-top: none;
+}
 .list-header, .list .item-block .item-inner {
     border-color: #7f8c8d;
 }
