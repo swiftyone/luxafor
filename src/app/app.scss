@@ -25,6 +25,8 @@ ion-content {
     padding-bottom: 56px;
     margin-top: 0px !important;
     padding-top: 56px;
+    padding-top: calc(constant(safe-area-inset-top) + 56px);
+    padding-top: calc(env(safe-area-inset-top) + 56px);
 }
 ion-item, ion-list, .item {
     background: transparent;

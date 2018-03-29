@@ -14,11 +14,14 @@ import { FirebaseProvider } from '../providers/firebase/firebase';
 export class MyApp {
   rootPage:any;
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, 
+  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
     public angularFireAuth: AngularFireAuth, private fb: FirebaseProvider) {
     platform.ready().then(() => {
       statusBar.styleDefault();
-      splashScreen.hide();
+
+      window.setTimeout(() => {
+        splashScreen.hide();
+      }, 1000);
     });
   }
 
