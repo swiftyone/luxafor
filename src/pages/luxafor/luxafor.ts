@@ -26,9 +26,9 @@ export class LuxaforPage {
   interval: number;
   onOpen: Subscription;
   dbStatusChange: Subscription;
-  constructor(public navCtrl: NavController, public storage: StorageProvider, 
-    private luxaforProvider: LuxaforProvider, public fb: FirebaseProvider, 
-    public af: AngularFireDatabase, public analytics: AnalyticsProvider, 
+  constructor(public navCtrl: NavController, public storage: StorageProvider,
+    private luxaforProvider: LuxaforProvider, public fb: FirebaseProvider,
+    public af: AngularFireDatabase, public analytics: AnalyticsProvider,
     public push: PushProvider, public plt: Platform) {}
 
   ionViewWillEnter() {
@@ -149,7 +149,10 @@ export class LuxaforPage {
 
   resetLight() {
     if (this.interval == undefined) {
-      this.interval = setInterval(() => {
+      // @blame If setInterval is used typescript resolves it to
+      // NodeJS.setInterval, which returns NodeJS.Timer instead of a number.
+      // Using window.setInterval is the usual workaround
+      this.interval = window.setInterval(() => {
         if (this.activeColor && this.brightness) {
           this.luxaforProvider.setColor(this.activeColor, this.brightness).then(data => {
             console.log(data);
